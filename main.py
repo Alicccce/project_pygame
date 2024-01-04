@@ -29,7 +29,7 @@ class Board:
         x = mouse_pos[0]
         y = mouse_pos[1]
         self.t = (str(x), str(y))
-        if self.left < x < (self.cell_size * 40) + self.left and self.top < y < (self.cell_size * 23) + self.top:
+        if self.left < x < (self.cell_size * 29) + self.left and self.top < y < (self.cell_size * 20) + self.top:
             self.on_click(self.t)
 
     def on_click(self, cell_coords):
@@ -56,7 +56,7 @@ class Board:
 
 if __name__ == '__main__':
     pygame.init()
-    board = Board(40, 23)
+    board = Board(29, 20)
     running = True
     size = wid, heigh = 1300, 750
     screen = pygame.display.set_mode(size)
@@ -66,16 +66,22 @@ if __name__ == '__main__':
     font = pygame.font.Font('freesansbold.ttf', 64)
     text = font.render('{}:{}'.format(mins, secs), True, (255, 255, 255), (0, 0, 0))
     textRect = text.get_rect()
-    textRect.center = 500, 600
+    textRect.center = 1200, 685
     clock = pygame.time.Clock()
+    k = 0
 
     while running:
         clock.tick(1)
         secs += 1
         screen.blit(text, textRect)
         if secs == 17:
-            break
+            k = 1
+        if k == 1:
+            secs, mins = 0, 0
+            k = 0
+            screen.fill((0, 0, 0))
         text = font.render('{}:{}'.format(mins, secs), True, (255, 255, 255), (0, 0, 0))
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
