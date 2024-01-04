@@ -61,16 +61,25 @@ if __name__ == '__main__':
     size = wid, heigh = 1300, 750
     screen = pygame.display.set_mode(size)
     screen.fill((0, 0, 0))
+
+    secs, mins = 0, 0
+    font = pygame.font.Font('freesansbold.ttf', 64)
+    text = font.render('{}:{}'.format(mins, secs), True, (255, 255, 255), (0, 0, 0))
+    textRect = text.get_rect()
+    textRect.center = 500, 600
     clock = pygame.time.Clock()
-    start_ticks = pygame.time.get_ticks()
+
     while running:
+        clock.tick(1)
+        secs += 1
+        screen.blit(text, textRect)
+        if secs == 17:
+            break
+        text = font.render('{}:{}'.format(mins, secs), True, (255, 255, 255), (0, 0, 0))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 board.get_click(event.pos)
-            seconds = (pygame.time.get_ticks() - start_ticks) / 1000
-            if seconds > 10:
-                break
         board.render(screen)
         pygame.display.flip()
