@@ -11,7 +11,7 @@ class Board:
         self.width = width
         self.height = height
         self.board = [[0] * width for _ in range(height)]
-        self.left = 10
+        self.left = 20
         self.top = 20
         self.cell_size = 30
 
@@ -62,25 +62,31 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode(size)
     screen.fill((0, 0, 0))
 
-    secs, mins = 0, 0
+    secs, mins, k = 0, 0, 0
     font = pygame.font.Font('freesansbold.ttf', 64)
     text = font.render('{}:{}'.format(mins, secs), True, (255, 255, 255), (0, 0, 0))
-    textRect = text.get_rect()
-    textRect.center = 1200, 685
+    textRect = text.get_rect(center=(1150, 685))
     clock = pygame.time.Clock()
-    k = 0
 
     while running:
         clock.tick(1)
         secs += 1
         screen.blit(text, textRect)
-        if secs == 17:
-            k = 1
-        if k == 1:
-            secs, mins = 0, 0
-            k = 0
-            screen.fill((0, 0, 0))
-        text = font.render('{}:{}'.format(mins, secs), True, (255, 255, 255), (0, 0, 0))
+        score = pygame.time.get_ticks() // 1000
+        if score == 17:
+            secs = 0
+        if 0 <= k <= 15:
+            k += 1
+            if k == 16:
+                k += 1
+            else:
+                text = font.render('{}:{}'.format(mins, secs), True, (255, 255, 255), (0, 0, 0))
+        if k == 17:
+            tab = pygame.font.SysFont('arial', 50)
+            sc_text = tab.render('Hi', 1, WHITE, BLUE)
+            pos = sc_text.get_rect(center=(1150, 500))
+            screen.blit(sc_text, pos)
+
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
