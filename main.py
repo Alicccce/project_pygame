@@ -14,6 +14,8 @@ class Board:
         self.left = 10
         self.top = 10
         self.cell_size = 50
+        self.small_size_rect_x = 20
+        self.small_size_rect_y = 50
         self.xs = ['black', 'red']
 
     def set_view(self, left, top, cell_size):
@@ -25,12 +27,17 @@ class Board:
         screen.fill((0, 0, 0))
         for i in range(self.height):
             for j in range(self.width):
-                pygame.draw.rect(screen, 'white',
-                                 (self.left + self.cell_size * j, self.top + self.cell_size * i,
-                                  self.cell_size, self.cell_size), 1)
-                pygame.draw.rect(screen, self.xs[self.board[i][j]],
-                             (1 + self.left + self.cell_size * j, 1 + self.top + self.cell_size * i,
-                              self.cell_size - 2, self.cell_size - 2))
+                if i % 2 == 0:
+                    pygame.draw.rect(screen, 'white',
+                                     (self.left + self.cell_size * j + self.small_size_rect_x * j,
+                                      self.top + self.cell_size * i + self.small_size_rect_y * i,
+                                      self.cell_size, self.cell_size), 1)
+                    pygame.draw.rect(screen, 'white', (self.left + self.cell_size * j + self.small_size_rect_x * j,
+                                                       self.top + self.cell_size * i + self.small_size_rect_y * i,
+                                                       self.small_size_rect_x, self.small_size_rect_y), 1)
+                    # pygame.draw.rect(screen, self.xs[self.board[i][j]],
+                    #                  (1 + self.left + self.cell_size * j, 1 + self.top + self.cell_size * i,
+                    #                   self.cell_size - 2, self.cell_size - 2))
 
     def get_cell(self, mouse_pos):
         x, y = mouse_pos
