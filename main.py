@@ -32,7 +32,7 @@ class Board:
                                      (self.left + self.cell_size * j + self.small_size_rect_x * j,
                                       self.top + self.cell_size * i + self.small_size_rect_y * i,
                                       self.cell_size, self.cell_size), 1)
-                    pygame.draw.rect(screen, 'white', (self.left + self.cell_size * j + self.small_size_rect_x * j,
+                    pygame.draw.rect(screen, 'white', (self.left + self.cell_size * j + self.small_size_rect_x * j - self.small_size_rect_x,
                                                        self.top + self.cell_size * i + self.small_size_rect_y * i,
                                                        self.small_size_rect_x, self.small_size_rect_y), 1)
                     # pygame.draw.rect(screen, self.xs[self.board[i][j]],
