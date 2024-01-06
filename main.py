@@ -77,19 +77,18 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode(size)
     screen.fill((0, 0, 0))
 
-    secs, mins, k = 0, 0, 0
+    secs, mins, k, scr = 0, 0, 0, 0
     font = pygame.font.Font('freesansbold.ttf', 64)
     text = font.render('{}:{}'.format(mins, secs), True, (255, 255, 255), (0, 0, 0))
     textRect = text.get_rect(center=(600, 400))
     clock = pygame.time.Clock()
 
     while running:
-        #m = True
         clock.tick(1)
         secs += 1
         screen.blit(text, textRect)
         score = pygame.time.get_ticks() // 1000
-        if score == 17:
+        if score == 17 or scr == 17:
             secs = 0
         if 0 <= k <= 15:
             k += 1
@@ -100,8 +99,8 @@ if __name__ == '__main__':
         if k == 17:
             tab = pygame.font.SysFont('arial', 50)
             sc_text = tab.render('Вы не успели! Попробуете выполнить задание заново?', 1, WHITE, BLUE)
-            pos = sc_text.get_rect(center=(600, 290))
-            screen.blit(sc_text, pos)
+            cor = sc_text.get_rect(center=(600, 290))
+            screen.blit(sc_text, cor)
 
             button = Button(500, 510, 260, 50, (255, 255, 255), 'не опять, а снова')
             button.draw(screen)
@@ -114,7 +113,9 @@ if __name__ == '__main__':
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if button.x <= event.pos[0] <= button.width + button.x and \
                         button.y <= event.pos[1] <= button.y + button.height:
-                    running = True
+                    screen.fill(BLACK)
+                k = 0
+                secs = 0
 
             #if event.type == pygame.MOUSEBUTTONDOWN:
              #   board.get_click(event.pos)
