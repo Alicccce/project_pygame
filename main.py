@@ -49,14 +49,29 @@ class Board:
             pygame.draw.rect(screen, BLACK, (self.left + self.cell_size * x2, self.top + self.cell_size * y2, self.cell_size, self.cell_size))
             self.board[y2][x2] = 0
 
-
     def get_click(self, mouse_pos):
         self.get_cell(mouse_pos)
 
 
+class Button:
+    def __init__(self, x, y, width, height, color, text=''):
+        self.x, self.y = x, y
+        self.width = width
+        self.height = height
+        self.color = color
+        self.text = text
+
+    def draw(self, win):
+        pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height))
+        if self.text != '':
+            font = pygame.font.SysFont('comicsans', 20)
+            text = font.render(self.text, 1, (0,0,0))
+            win.blit(text, (self.x + (self.width/2 - text.get_width()/2), self.y + (self.height/2 - text.get_height()/2)))
+
+
 if __name__ == '__main__':
     pygame.init()
-    board = Board(29, 20)
+    #board = Board(29, 20)
     running = True
     size = wid, heigh = 1300, 750
     screen = pygame.display.set_mode(size)
@@ -65,10 +80,11 @@ if __name__ == '__main__':
     secs, mins, k = 0, 0, 0
     font = pygame.font.Font('freesansbold.ttf', 64)
     text = font.render('{}:{}'.format(mins, secs), True, (255, 255, 255), (0, 0, 0))
-    textRect = text.get_rect(center=(1150, 685))
+    textRect = text.get_rect(center=(600, 400))
     clock = pygame.time.Clock()
 
     while running:
+        #m = True
         clock.tick(1)
         secs += 1
         screen.blit(text, textRect)
@@ -83,15 +99,24 @@ if __name__ == '__main__':
                 text = font.render('{}:{}'.format(mins, secs), True, (255, 255, 255), (0, 0, 0))
         if k == 17:
             tab = pygame.font.SysFont('arial', 50)
-            sc_text = tab.render('Hi', 1, WHITE, BLUE)
-            pos = sc_text.get_rect(center=(1150, 500))
+            sc_text = tab.render('Вы не успели! Попробуете выполнить задание заново?', 1, WHITE, BLUE)
+            pos = sc_text.get_rect(center=(600, 290))
             screen.blit(sc_text, pos)
+
+            button = Button(500, 510, 260, 50, (255, 255, 255), 'не опять, а снова')
+            button.draw(screen)
 
 
         for event in pygame.event.get():
+            button = Button(500, 510, 260, 50, (255, 255, 255), 'не опять, а снова')
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                board.get_click(event.pos)
-        board.render(screen)
+                if button.x <= event.pos[0] <= button.width + button.x and \
+                        button.y <= event.pos[1] <= button.y + button.height:
+                    running = True
+
+            #if event.type == pygame.MOUSEBUTTONDOWN:
+             #   board.get_click(event.pos)
+        #board.render(screen)
         pygame.display.flip()
