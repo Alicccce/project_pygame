@@ -153,7 +153,7 @@ if __name__ == '__main__':
 
         if millis // 1000 >= 17:
             tab = pygame.font.SysFont('arial', 30)
-            sc_text = tab.render('Вы не успели! Попробуете выполнить задание заново?', True, WHITE, BLUE)
+            sc_text = tab.render('Вы нe успели! Попробуете выполнить задание заново?', True, WHITE, BLUE)
             cor = sc_text.get_rect(center=(1000, 200))
             screen.blit(sc_text, cor)
             button_retry.draw(screen)
