@@ -1,4 +1,6 @@
 import pygame
+import numpy as np
+from pandas.core.common import flatten
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -12,9 +14,6 @@ LEVEL = {
         [0, 1, 0, 1, 0, 1, 0, 1, 0]
     ]
 }
-
-
-
 
 
 class Board:
@@ -86,11 +85,17 @@ class Board:
             row, col = cell_coords
             if self.board[row][col] == 0:
                 self.board[row][col] = 5
-                print(5)
 
     def get_click(self, mouse_pos):
         cell = self.get_cell(mouse_pos)
         self.on_click(cell)
+
+    def proov(self):
+        arr = list(flatten(self.board))
+        if 0 in arr:
+            return False
+        else:
+            return True
 
 
 class Button:
@@ -105,8 +110,9 @@ class Button:
         pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height))
         if self.text != '':
             font = pygame.font.SysFont('comicsans', 20)
-            text = font.render(self.text, 1, (0,0,0))
-            win.blit(text, (self.x + (self.width/2 - text.get_width()/2), self.y + (self.height/2 - text.get_height()/2)))
+            text = font.render(self.text, 1, (0, 0, 0))
+            win.blit(text, (
+            self.x + (self.width / 2 - text.get_width() / 2), self.y + (self.height / 2 - text.get_height() / 2)))
 
 
 if __name__ == '__main__':
@@ -115,6 +121,8 @@ if __name__ == '__main__':
     board = Board(100, 'Level 1')
     board.set_view(10, 10, 100)
     running = True
+    timer_active = True
+    time_of_end = False
     size = (1300, 750)
     screen = pygame.display.set_mode(size)
     clock = pygame.time.Clock()
@@ -128,8 +136,14 @@ if __name__ == '__main__':
     font = pygame.font.Font('freesansbold.ttf', 64)
 
     while running:
+
         millis = pygame.time.get_ticks() - start_ticks
         secs = millis // 1000
+        if secs >= 16:
+            secs = 15
+        if board.proov():
+            secs = time_of_end
+
         mins = secs // 60
         secs %= 60
 
@@ -142,7 +156,8 @@ if __name__ == '__main__':
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
-                board.get_click(event.pos)
+                if secs < 15:
+                    board.get_click(event.pos)
                 board.render(screen)
 
         # Рендеринг экрана и объектов
@@ -151,7 +166,8 @@ if __name__ == '__main__':
         button_done.draw(screen)
         screen.blit(text, textRect)
 
-        if millis // 1000 >= 17:
+        if millis // 1000 >= 15 or board.proov():
+            time_of_end = secs
             tab = pygame.font.SysFont('arial', 30)
             sc_text = tab.render('Вы нe успели! Попробуете выполнить задание заново?', True, WHITE, BLUE)
             cor = sc_text.get_rect(center=(1000, 200))
