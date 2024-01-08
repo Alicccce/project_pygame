@@ -4,9 +4,17 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
-LEVEL = {'Level 1': [[0, 1, 0, 1, 0, 1, 0, 1, 0], [0, 1, 0], [0, 1, 0], [0, 1, 0, 1, 0, 1, 0, 1, 0]]
+LEVEL = {
+    'Level 1': [
+        [0, 1, 0, 1, 0, 1, 0, 1, 0],
+        [0, 1, 0],
+        [0, 1, 0],
+        [0, 1, 0, 1, 0, 1, 0, 1, 0]
+    ]
+}
 
-         }
+
+
 
 
 class Board:
@@ -28,7 +36,7 @@ class Board:
         self.cell_size = cell_size
 
     def render(self, screen):
-        #screen.fill(BLACK)
+        # screen.fill(BLACK)
         top_y = self.top
         for row_index, row in enumerate(self.board):
             top_x = self.left
@@ -103,50 +111,54 @@ class Button:
 
 if __name__ == '__main__':
     pygame.init()
+
     board = Board(100, 'Level 1')
     board.set_view(10, 10, 100)
     running = True
-    size = wid, heigh = 1300, 750
+    size = (1300, 750)
     screen = pygame.display.set_mode(size)
-    screen.fill((0, 0, 0))
-    secs, mins, k, scr = 0, 0, 0, 0  # k - переменная для отдельного подсчёта секунд
-    font = pygame.font.Font('freesansbold.ttf', 64)
-    text = font.render('{}:{}'.format(mins, secs), True, (255, 255, 255), (0, 0, 0))
-    textRect = text.get_rect(center=(1000, 400))
     clock = pygame.time.Clock()
+    start_ticks = pygame.time.get_ticks()  # стартовое время в миллисекундах
+
+    # Создаем кнопки один раз вне цикла
+    button_done = Button(300, 600, 260, 50, RED, 'done')
+    button_retry = Button(500, 510, 260, 50, WHITE, 'не опять, а снова')
+
+    # Определите шрифт один раз вне цикла
+    font = pygame.font.Font('freesansbold.ttf', 64)
 
     while running:
-        button = Button(300, 600, 260, 50, (RED), 'done')
-        button.draw(screen)
-        clock.tick(1)
-        secs += 1
-        screen.blit(text, textRect)
-        score = pygame.time.get_ticks() // 1000
-        if score == 17 or scr == 17:  # скидываем секунды, если дошло до 15
-            secs = 0
-        if 0 <= k <= 15:
-            k += 1
-            if k == 16:
-                k += 1
-            else:  # вывод только до 15 сек.
-                text = font.render('{}:{}'.format(mins, secs), True, (255, 255, 255), (0, 0, 0))
-        if k == 17:
-            tab = pygame.font.SysFont('arial', 30)
-            sc_text = tab.render('Вы не успели! Попробуете выполнить задание заново?', 1, WHITE, BLUE)
-            cor = sc_text.get_rect(center=(1000, 200))
-            screen.blit(sc_text, cor)
+        millis = pygame.time.get_ticks() - start_ticks
+        secs = millis // 1000
+        mins = secs // 60
+        secs %= 60
 
-            button = Button(500, 510, 260, 50, (255, 255, 255), 'не опять, а снова')
-            button.draw(screen)
+        # Обновляем текст один раз на каждый тик
+        text = font.render('{}:{}'.format(mins, secs), True, WHITE, BLACK)
+        textRect = text.get_rect(center=(1000, 400))
 
         for event in pygame.event.get():
-            button = Button(900, 510, 260, 50, (255, 255, 255), 'не опять, а снова')
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
                 board.get_click(event.pos)
-        board.render(screen)
-        pygame.display.flip()
+                board.render(screen)
 
-pygame.quit()
+        # Рендеринг экрана и объектов
+        screen.fill(BLACK)
+        board.render(screen)
+        button_done.draw(screen)
+        screen.blit(text, textRect)
+
+        if millis // 1000 >= 17:
+            tab = pygame.font.SysFont('arial', 30)
+            sc_text = tab.render('Вы не успели! Попробуете выполнить задание заново?', True, WHITE, BLUE)
+            cor = sc_text.get_rect(center=(1000, 200))
+            screen.blit(sc_text, cor)
+            button_retry.draw(screen)
+
+        pygame.display.flip()
+        clock.tick(60)  # Ограничить до 60 кадров в секунду
+
+    pygame.quit()
