@@ -46,6 +46,7 @@ class Board:
                     row_height = max(row_height, self.cell_size)
             top_y += row_height + self.row_spacing
 
+
     def get_cell(self, mouse_pos):
         x, y = mouse_pos
         top_y = self.top
