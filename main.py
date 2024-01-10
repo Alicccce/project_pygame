@@ -66,8 +66,8 @@ if __name__ == '__main__':
         check = []
         millis = pygame.time.get_ticks() - start_ticks
         secs = millis // 1000
-        if secs >= 16:
-            secs = 15
+        if secs >= 31:
+            secs = 30
         mins = secs // 60
         secs %= 60
 
@@ -80,7 +80,7 @@ if __name__ == '__main__':
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
             if event.type == pygame.MOUSEMOTION or event.type == pygame.MOUSEBUTTONDOWN:
-                if millis // 1000 >= 15:
+                if millis // 1000 >= 30:
                     if len(s) != 5:
                         tab = pygame.font.SysFont('arial', 26)
                         sc_text = tab.render('Не получилось :( Попробуете выполнить задание заново?', True, WHITE, BLUE)
@@ -101,9 +101,9 @@ if __name__ == '__main__':
                             if (event.pos[0] - dopustm in checkpoints_x and event.pos[1] - dopustm in checkpoints_y):
                                 check.append((event.pos[0] - dopustm, event.pos[1] - dopustm))
                             if (event.pos[0] + dopustm in checkpoints_x and event.pos[1] - dopustm in checkpoints_y):
-                                check.append((event.pos[0] - dopustm, event.pos[1] - dopustm))
+                                check.append((event.pos[0] + dopustm, event.pos[1] - dopustm))
                             if (event.pos[0] - dopustm in checkpoints_x and event.pos[1] + dopustm in checkpoints_y):
-                                check.append((event.pos[0] - dopustm, event.pos[1] - dopustm))
+                                check.append((event.pos[0] - dopustm, event.pos[1] + dopustm))
                             dopustm += 1
         for ch in check:
             for hc in checkpoints:
