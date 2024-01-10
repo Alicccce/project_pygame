@@ -84,7 +84,7 @@ if __name__ == '__main__':
 
         x, y = 0, 45
         screen.blit(imgg, (x, y))
-        x += 200
+        #x += 200
 
         keys = pygame.key.get_pressed()
         all_sprites.update(keys)
