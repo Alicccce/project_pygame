@@ -48,6 +48,8 @@ if __name__ == '__main__':
     size = (1300, 750)
     image = load_image("itog.png")
     screen = pygame.display.set_mode(size)
+    drawing_surface = pygame.Surface(size, pygame.SRCALPHA)
+
     clock = pygame.time.Clock()
     start_ticks = pygame.time.get_ticks()  # стартовое время в миллисекундах
     # Создаем кнопки один раз вне цикла
@@ -74,11 +76,12 @@ if __name__ == '__main__':
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
-            if event.type == pygame.MOUSEMOTION or event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEMOTION or event.type == pygame.MOUSEBUTTONDOWN :
                 if pygame.mouse.get_pressed()[0]:
+                    pygame.draw.circle(drawing_surface, BLUE, event.pos, 5)
                     pygame.draw.circle(screen, BLUE, event.pos, 5)
 
-        screen.blit(image, (10, 10))
+
         screen.blit(text, textRect)
         button_done.draw(screen, 850, 600)
 
@@ -87,6 +90,9 @@ if __name__ == '__main__':
             sc_text = tab.render('Вы нe успели! Попробуете выполнить задание заново?', True, WHITE, BLUE)
             cor = sc_text.get_rect(center=(900, 250))
             screen.blit(sc_text, cor)
+
+        screen.blit(image, (10, 10))
+        screen.blit(drawing_surface, (0,0))
 
         pygame.display.flip()
         clock.tick(60)  # Ограничить до 60 кадров в секунду
