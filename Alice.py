@@ -36,9 +36,9 @@ class Bus(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
 
     def update(self, keys):
-        if keys[pygame.K_w] and self.rect.y + 14 >= 0:
+        if keys[pygame.K_w] and self.rect.y + 14 >= 80:
             self.rect.y -= 5
-        if keys[pygame.K_s] and self.rect.y + 111 <= 750:
+        if keys[pygame.K_s] and self.rect.y + 111 <= 730:
             self.rect.y += 5
 
 
@@ -69,27 +69,42 @@ if __name__ == '__main__':
     all_sprites = pygame.sprite.Group()
     Bus(all_sprites)
 
+
+    img = pygame.image.load('data/крыша.png')
+    immg = pygame.image.load('data/крыыша.png')
+    imgg = pygame.image.load('data/trop.png')
+
     running = True
 
     object_speed = 5
 
 
-
     while running:
-        screen.fill(BLACK)
+        screen.fill((150, 190, 100))
+
+        x, y = 0, 45
+        screen.blit(imgg, (x, y))
+        #x += 200
 
         keys = pygame.key.get_pressed()
         all_sprites.update(keys)
         all_sprites.draw(screen)
 
 
-
-
-
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+
+
+        for i in range(3):
+            screen.blit(img, (i * 140, -35))
+        screen.blit(immg, (420, -68))
+        for i in range(4):
+            screen.blit(img, (525 + i * 140, -35))
+        screen.blit(immg, (1085, -68))
+        screen.blit(img, (1191, -35))
+
+
 
         pygame.display.flip()
         clock.tick(60)  # Ограничить до 60 кадров в секунду
