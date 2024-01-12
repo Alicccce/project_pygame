@@ -40,6 +40,14 @@ def load_image(name, colorkey=None):
     return image
 
 
+def check_and_append(event_pos):
+    for x, y in checkpoints:
+        print(abs(x - event_pos[0]), abs(y - event_pos[1]))
+        if abs(x - event_pos[0]) <= 30 and abs(y - event_pos[1]) <= 30:
+            check.add((x, y))
+            break
+
+
 if __name__ == '__main__':
     pygame.init()
 
@@ -56,14 +64,13 @@ if __name__ == '__main__':
     # Определите шрифт один раз вне цикла
     font = pygame.font.Font('freesansbold.ttf', 64)
 
-
     checkpoints = [(320, 87), (221, 262), (68, 432), (441, 423), (68, 267)]
     checkpoints_x = [320, 221, 68, 441, 68]
     checkpoints_y = [87, 262, 432, 423, 267]
     s = []
+    check = set()
 
     while running:
-        check = []
         millis = pygame.time.get_ticks() - start_ticks
         secs = millis // 1000
         if secs >= 31:
@@ -82,6 +89,7 @@ if __name__ == '__main__':
             if event.type == pygame.MOUSEMOTION or event.type == pygame.MOUSEBUTTONDOWN:
                 if millis // 1000 >= 30:
                     if len(s) != 5:
+                        print(s)
                         tab = pygame.font.SysFont('arial', 26)
                         sc_text = tab.render('Не получилось :( Попробуете выполнить задание заново?', True, WHITE, BLUE)
                         cor = sc_text.get_rect(center=(900, 250))
@@ -94,17 +102,20 @@ if __name__ == '__main__':
                 else:
                     if pygame.mouse.get_pressed()[0]:
                         pygame.draw.circle(drawing_surface, BLUE, event.pos, 7.5)
-                        dopustm = 0
-                        for i in range(30):
-                            if (event.pos[0] + dopustm in checkpoints_x and event.pos[1] + dopustm in checkpoints_y):
-                                check.append((event.pos[0] + dopustm, event.pos[1] + dopustm))
-                            if (event.pos[0] - dopustm in checkpoints_x and event.pos[1] - dopustm in checkpoints_y):
-                                check.append((event.pos[0] - dopustm, event.pos[1] - dopustm))
-                            if (event.pos[0] + dopustm in checkpoints_x and event.pos[1] - dopustm in checkpoints_y):
-                                check.append((event.pos[0] + dopustm, event.pos[1] - dopustm))
-                            if (event.pos[0] - dopustm in checkpoints_x and event.pos[1] + dopustm in checkpoints_y):
-                                check.append((event.pos[0] - dopustm, event.pos[1] + dopustm))
-                            dopustm += 1
+                        check_and_append(event.pos)
+
+                        # dopustm = 0
+                        # for i in range(30):
+                        #     if (event.pos[0] + dopustm in checkpoints_x and event.pos[1] + dopustm in checkpoints_y):
+                        #         check.append((event.pos[0] + dopustm, event.pos[1] + dopustm))
+                        #     if (event.pos[0] - dopustm in checkpoints_x and event.pos[1] - dopustm in checkpoints_y):
+                        #         check.append((event.pos[0] - dopustm, event.pos[1] - dopustm))
+                        #     if (event.pos[0] + dopustm in checkpoints_x and event.pos[1] - dopustm in checkpoints_y):
+                        #         check.append((event.pos[0] + dopustm, event.pos[1] - dopustm))
+                        #     if (event.pos[0] - dopustm in checkpoints_x and event.pos[1] + dopustm in checkpoints_y):
+                        #         check.append((event.pos[0] - dopustm, event.pos[1] + dopustm))
+                        #     dopustm += 1
+
         for ch in check:
             for hc in checkpoints:
                 if ch == hc and ch not in s:
