@@ -10,7 +10,7 @@ BLUE = (0, 0, 255)
 PINK = (255, 100, 100)
 HEIGHT = 750
 WIDTH = 1300
-for_y = []
+for_x = []
 
 
 def load_image(name, colorkey=None):
@@ -48,23 +48,23 @@ class Cars(pygame.sprite.Sprite):
         super().__init__()
         self.image = load_image(name[0]) # считываем назвнаие
         self.rect = self.image.get_rect()
-        self.rect.x = name[1][0] # считаваем неизменную абциссу
-        #self.rect.y = name[1][1]
-        # ТУТ problem !
-        if name[1][1] not in for_y: # сравнение с предыдущими ординатами
-            self.rect.y = name[1][1]
+        self.rect.x = name[1][0] # считаваем абциссу
+        self.rect.y = name[1][1] # считаваем ординату
+        # В РАЗРАБОТКЕ
+        '''if name[1][0] not in for_x:  # сравнение с предыдущими ординатами
+            self.rect.x = name[1][0]
         else:
-            #if (name[1][1] + randint(50, 300)) != for_y[]
-            self.rect.y = (name[1][1] + 300) or (name[1][1] - 300)
-            for_y.append(self.rect.y) # "запоминаем" ординату
-        for_y.append(self.rect.y) # "запоминаем" ординату
+            self.rect.x = (name[1][0] + self.image.get_size()[0]) or (name[1][0] - self.image.get_size()[0])
+            for_x.append(self.rect.x)
+        for_x.append(self.rect.x)  # "запоминаем" ординату'''
         g_sprts.add(self)
 
     def update(self, speed):
+        cor_y = [90, 200, 310, 530, 640]
         self.rect.x -= 5
         if self.rect.x + self.rect.width < 0:
             self.rect.x = randint(WIDTH + 10, WIDTH + 500)
-            self.rect.y = randint(85, HEIGHT - 110)
+            self.rect.y = choice(cor_y)
 
 
 if __name__ == '__main__':
@@ -76,14 +76,14 @@ if __name__ == '__main__':
 
     all_sprites = pygame.sprite.Group()
     Bus(all_sprites)
-    # Генерация координат x, y
-    for name in [('red_car.png', (randint(WIDTH + 10, WIDTH + 500), randint(85, HEIGHT - 110))),
-                 ('yel_car.png', (randint(WIDTH + 10, WIDTH + 500), randint(85, HEIGHT - 110))),
-                 ('gray_car.png', (randint(WIDTH + 10, WIDTH + 500), randint(85, HEIGHT - 110))),
-                 ('black_car.png', (randint(WIDTH + 10, WIDTH + 500), randint(85, HEIGHT - 110))),
-                 ('purp_car.png', (randint(WIDTH + 10, WIDTH + 500), randint(85, HEIGHT - 110))),
-                 ('white_car.png', (randint(WIDTH + 10, WIDTH + 500), randint(85, HEIGHT - 110)))]:
-        Cars(all_sprites, name) # передаём в name имя файла и координаты запуска
+    cor_y = [90, 200, 310, 530, 640]
+    for name in [('red_car.png', (randint(WIDTH + 10, WIDTH + 500), choice(cor_y))),
+                 ('yel_car.png', (randint(WIDTH + 10, WIDTH + 500), choice(cor_y))),
+                 ('gray_car.png', (randint(WIDTH + 10, WIDTH + 500), choice(cor_y))),
+                 ('black_car.png', (randint(WIDTH + 10, WIDTH + 500), choice(cor_y))),
+                 ('purp_car.png', (randint(WIDTH + 10, WIDTH + 500), choice(cor_y))),
+                 ('white_car.png', (randint(WIDTH + 10, WIDTH + 500), choice(cor_y)))]:
+                 Cars(all_sprites, name) # передаём в name имя файла и координаты запуска
     imgg = load_image('roof_g.png')
     imgv = load_image('roof_v.png')
     imgtr = load_image('trop.png')
