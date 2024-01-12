@@ -76,7 +76,7 @@ if __name__ == '__main__':
 
     all_sprites = pygame.sprite.Group()
     Bus(all_sprites)
-    # Генерация координат
+    # Генерация координат x, y
     for name in [('red_car.png', (randint(WIDTH + 10, WIDTH + 500), randint(85, HEIGHT - 110))),
                  ('yel_car.png', (randint(WIDTH + 10, WIDTH + 500), randint(85, HEIGHT - 110))),
                  ('gray_car.png', (randint(WIDTH + 10, WIDTH + 500), randint(85, HEIGHT - 110))),
