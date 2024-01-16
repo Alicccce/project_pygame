@@ -11,12 +11,13 @@ PINK = (255, 100, 100)
 HEIGHT = 750
 WIDTH = 1300
 for_x = []
+need = []
 ox = [i for i in range(WIDTH + 10, WIDTH + 5001, 150)]
 
 
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
-    # если файл не существует, то выходим
+    # если файл не существцует, то выходим
     if not os.path.isfile(fullname):
         print(f"Файл с изображением '{fullname}' не найден")
         sys.exit()
@@ -24,7 +25,7 @@ def load_image(name, colorkey=None):
     return image
 
 
-def ox_operations(s):  # функция генерации абциссы на старте у машинки
+def ox_operations(s): # функция генерации абциссы на старте у машинки
     if s != []:
         x = choice(s)
         s.remove(x)
@@ -41,7 +42,7 @@ class Bus(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = 10
         self.rect.y = HEIGHT // 2 + 15
-        self.mask = pygame.mask.from_surface(self.image)
+        self.mask_bus = pygame.mask.from_surface(self.image)
 
     def update(self, keys):
         if keys[pygame.K_w] and self.rect.y + 14 >= 80:
@@ -51,24 +52,38 @@ class Bus(pygame.sprite.Sprite):
 
 
 class Cars(pygame.sprite.Sprite):
-    def __init__(self, g_sprts, name, ox_per):  # ('png', (x, y))
+    def __init__(self, g_sprts, name, ox_per): # ('png', (x, y))
         super().__init__()
         self.ox_per = ox_per
-        self.image = load_image(name[0])  # считываем назвнаие
+        self.image = load_image(name[0]) # считываем назвнаие
         self.rect = self.image.get_rect()
-        self.rect.x = name[1][0]  # считаваем абциссу
-        self.rect.y = name[1][1]  # считаваем ординату
+        self.rect.x = name[1][0] # считаваем абциссу
+        self.rect.y = name[1][1] # считаваем ординату
+        self.mask_car = pygame.mask.from_surface(self.image)
         g_sprts.add(self)
         for_x.append(self.rect.x)
+        need.append(self.rect)
 
     def update(self, speed):
-        cor_y = [90, 200, 310, 420, 530, 640]
-        self.rect.x -= 12
-        p = choice(self.ox_per)  # выбор абциссы старта машинки при достижении левой границы
-        if self.rect.x + self.rect.width < 0 and p not in for_x:
-            self.rect.x = (p)
-            self.rect.y = choice(cor_y)
-            for_x.append(self.rect.x), self.ox_per.remove(self.rect.x)
+        #m = load_image("bus_osn.png").get_rect()
+        m = Bus().rect
+        #if not pygame.mask.from_surface(load_image("bus_osn.png")).overlap(self.mask_car, (1, 1)):
+        #if not (m.get_at((load_image("bus_osn.png").get_rect().x, load_image("bus_osn.png").get_rect().y)) == self.mask_car.get_at((self.rect.x, self.rect.y))):
+        #if not ((load_image("bus_osn.png").get_rect().x == self.rect.x) or (load_image("bus_osn.png").get_rect().y == self.rect.y)):
+        #for i in need:
+        if not self.rect.colliderect(m):
+            cor_y = [90, 200, 310, 420, 530, 640]
+            self.rect.x -= 12
+            p = choice(self.ox_per) # выбор абциссы старта машинки при достижении левой границы
+            if self.rect.x + self.rect.width < 0 and p not in for_x:
+                self.rect.x = (p)
+                self.rect.y = choice(cor_y)
+                for_x.append(self.rect.x), self.ox_per.remove(self.rect.x)
+        else:
+            screen.fill((100, 200, 100))
+            #restart_mayb(self.rect)
+            self.rect.x = name[1][0]
+            self.rect.y = name[1][1]
 
 
 if __name__ == '__main__':
@@ -91,7 +106,7 @@ if __name__ == '__main__':
                  ('black_car.png', (x4, choice(cor_y))),
                  ('purp_car.png', (x5, choice(cor_y))),
                  ('white_car.png', (x6, choice(cor_y)))]:
-        Cars(all_sprites, name, ox)  # передаём в name имя файла и координаты запуска
+        Cars(all_sprites, name, ox) # передаём в name имя файла и координаты запуска
 
     imgg = load_image('roof_g.png')
     imgv = load_image('roof_v.png')
@@ -138,6 +153,7 @@ if __name__ == '__main__':
         roof_v_positions = [(x - roof_g_speed, y) for x, y in roof_v_positions]
         # Делаем то же для "roof_v"
         roof_v_positions = [((WIDTH, y) if x < - imgv.get_width() - 100 else (x, y)) for x, y in roof_v_positions]
+
 
         keys = pygame.key.get_pressed()
         all_sprites.update(keys)
