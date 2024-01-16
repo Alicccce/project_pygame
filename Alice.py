@@ -54,7 +54,6 @@ class Button:
         click = pygame.mouse.get_pressed()
         if y < mouse[1] < y + self.height and x < mouse[0] < x + self.width and click[0] == 1:
             pygame.draw.rect(screen, (self.act_color), self.rect)
-            #smena()
         else:
             pygame.draw.rect(screen, (self.inact_color), self.rect)
         font = pygame.font.Font(None, 35)
@@ -80,6 +79,8 @@ class Bus(pygame.sprite.Sprite):
             buyt = Button(500, 600, 260, 50, GREEN, LIGHT_GREEN, 'done')
             smena()
             buyt.draw(500, 600)
+            bu = pygame.transform.scale(load_image('boo.png'), (200, 200))
+            screen.blit(bu, (self.rect.x + 150, self.rect.y - 50))
         if keys[pygame.K_w] and self.rect.y + 14 >= 80:
             self.rect.y -= 6
         if keys[pygame.K_s] and self.rect.y + 111 <= 730:
