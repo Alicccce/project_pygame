@@ -65,7 +65,7 @@ class Cars(pygame.sprite.Sprite):
         need.append(self.rect)
 
     def update(self, speed):
-        #m = load_image("bus_osn.png").get_rect()
+        # m = load_image("bus_osn.png").get_rect()
         m = Bus().rect
         #if not pygame.mask.from_surface(load_image("bus_osn.png")).overlap(self.mask_car, (1, 1)):
         #if not (m.get_at((load_image("bus_osn.png").get_rect().x, load_image("bus_osn.png").get_rect().y)) == self.mask_car.get_at((self.rect.x, self.rect.y))):
