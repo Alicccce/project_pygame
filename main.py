@@ -46,6 +46,7 @@ def check_and_append(event_pos):
             check.add((x, y))
             break
 
+
 def restart():
     global s, check, start_ticks
     s = []
@@ -53,9 +54,6 @@ def restart():
     start_ticks = pygame.time.get_ticks()
     drawing_surface.fill((0, 0, 0, 0))
     pygame.display.flip()
-
-
-
 
 
 if __name__ == '__main__':
@@ -99,11 +97,12 @@ if __name__ == '__main__':
                 screen.blit(sc_text, cor)
                 if button_done.draw(screen, 500, 600) == 1:
                     pygame.display.update()
-            else:
-                tab = pygame.font.SysFont('arial', 26)
-                sc_text = tab.render('Всё GOOD', True, WHITE, BLUE)
-                cor = sc_text.get_rect(center=(900, 250))
-                screen.blit(sc_text, cor)
+
+        if len(s) == 11:
+            tab = pygame.font.SysFont('arial', 26)
+            sc_text = tab.render('Всё GOOD', True, WHITE, BLUE)
+            cor = sc_text.get_rect(center=(900, 250))
+            screen.blit(sc_text, cor)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
