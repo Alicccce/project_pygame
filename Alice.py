@@ -28,7 +28,7 @@ def load_image(name, colorkey=None):
     return image
 
 
-def ox_operations(s): # функция генерации абциссы на старте у машинки
+def ox_operations(s):  # функция генерации абциссы на старте у машинки
     if s != []:
         x = choice(s)
         s.remove(x)
@@ -75,12 +75,6 @@ class Bus(pygame.sprite.Sprite):
         self.mask_bus = pygame.mask.from_surface(self.image)
 
     def update(self, keys):
-        if pygame.sprite.spritecollideany(self, g_sprts):
-            buyt = Button(500, 600, 260, 50, GREEN, LIGHT_GREEN, 'done')
-            smena()
-            buyt.draw(500, 600)
-            bu = pygame.transform.scale(load_image('boo.png'), (200, 200))
-            screen.blit(bu, (self.rect.x + 150, self.rect.y - 50))
         if keys[pygame.K_w] and self.rect.y + 14 >= 80:
             self.rect.y -= 6
         if keys[pygame.K_s] and self.rect.y + 111 <= 730:
@@ -88,13 +82,13 @@ class Bus(pygame.sprite.Sprite):
 
 
 class Cars(pygame.sprite.Sprite):
-    def __init__(self, all_sprites, name, ox_per): # ('png', (x, y))
+    def __init__(self, all_sprites, name, ox_per):  # ('png', (x, y))
         super().__init__(all_sprites)
         self.ox_per = ox_per
-        self.image = load_image(name[0]) # считываем назвнаие
+        self.image = load_image(name[0])  # считываем назвнаие
         self.rect = self.image.get_rect()
-        self.rect.x = name[1][0] # считаваем абциссу
-        self.rect.y = name[1][1] # считаваем ординату
+        self.rect.x = name[1][0]  # считаваем абциссу
+        self.rect.y = name[1][1]  # считаваем ординату
         self.mask_car = pygame.mask.from_surface(self.image)
         self.add(g_sprts)
         for_x.append(self.rect.x)
@@ -103,11 +97,19 @@ class Cars(pygame.sprite.Sprite):
     def update(self, speed):
         cor_y = [90, 200, 310, 420, 530, 640]
         self.rect.x -= 12
-        p = choice(self.ox_per) # выбор абциссы старта машинки при достижении левой границы
+        p = choice(self.ox_per)  # выбор абциссы старта машинки при достижении левой границы
+        if pygame.sprite.collide_mask(self, bus):
+            buyt = Button(500, 600, 260, 50, GREEN, LIGHT_GREEN, 'done')
+            smena()
+            buyt.draw(500, 600)
+            bu = pygame.transform.scale(load_image('boo.png'), (200, 200))
+            screen.blit(bu, (self.rect.x-70, self.rect.y-50))
+
         if self.rect.x + self.rect.width < 0 and p not in for_x:
             self.rect.x = (p)
             self.rect.y = choice(cor_y)
             for_x.append(self.rect.x), self.ox_per.remove(self.rect.x)
+
 
 if __name__ == '__main__':
     pygame.init()
@@ -117,7 +119,7 @@ if __name__ == '__main__':
     start_ticks = pygame.time.get_ticks()
 
     all_sprites = pygame.sprite.Group()
-    Bus(all_sprites)
+    bus = Bus(all_sprites)
 
     cor_y = [90, 200, 310, 420, 530, 640]
     x1, x2 = ox_operations(ox)[0], ox_operations(ox)[0]
@@ -129,7 +131,7 @@ if __name__ == '__main__':
                  ('black_car.png', (x4, choice(cor_y))),
                  ('purp_car.png', (x5, choice(cor_y))),
                  ('white_car.png', (x6, choice(cor_y)))]:
-            Cars(all_sprites, name, ox) # передаём в name имя файла и координаты запуска
+        Cars(all_sprites, name, ox)  # передаём в name имя файла и координаты запуска
 
     imgg = load_image('roof_g.png')
     imgv = load_image('roof_v.png')
@@ -139,7 +141,7 @@ if __name__ == '__main__':
 
     xx, yy = 0, 45
     X1, Y1 = 1280, 45
-    roof_g_speed = 6
+    roof_g_speed = 4
     roof_g_positions = [(490, -35), (80, -35), (225, -35)]
     roof_v_positions = [(1085, -68), (720, -68), (840, -68)]
 
@@ -176,7 +178,6 @@ if __name__ == '__main__':
         roof_v_positions = [(x - roof_g_speed, y) for x, y in roof_v_positions]
         # Делаем то же для "roof_v"
         roof_v_positions = [((WIDTH, y) if x < - imgv.get_width() - 100 else (x, y)) for x, y in roof_v_positions]
-
 
         keys = pygame.key.get_pressed()
         all_sprites.update(keys)
