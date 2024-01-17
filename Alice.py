@@ -75,9 +75,10 @@ class Bus(pygame.sprite.Sprite):
         self.mask_bus = pygame.mask.from_surface(self.image)
 
     def update(self, keys):
-        if keys[pygame.K_w] and self.rect.y + 14 >= 80:
+        global speed_car
+        if keys[pygame.K_w] and self.rect.y + 14 >= 80 and speed_car != 0:
             self.rect.y -= 6
-        if keys[pygame.K_s] and self.rect.y + 111 <= 730:
+        if keys[pygame.K_s] and self.rect.y + 111 <= 730 and speed_car != 0:
             self.rect.y += 6
 
 
@@ -95,13 +96,15 @@ class Cars(pygame.sprite.Sprite):
         need.append(self.rect)
 
     def update(self, speed):
+        global speed_car
         cor_y = [90, 200, 310, 420, 530, 640]
-        self.rect.x -= 12
+        self.rect.x -= speed_car
         p = choice(self.ox_per)  # выбор абциссы старта машинки при достижении левой границы
         if pygame.sprite.collide_mask(self, bus):
             buyt = Button(500, 600, 260, 50, GREEN, LIGHT_GREEN, 'done')
             smena()
             buyt.draw(500, 600)
+            speed_car = 0
             bu = pygame.transform.scale(load_image('boo.png'), (200, 200))
             screen.blit(bu, (self.rect.x-70, self.rect.y-50))
 
@@ -141,6 +144,7 @@ if __name__ == '__main__':
 
     xx, yy = 0, 45
     X1, Y1 = 1280, 45
+    speed_car = 12
     roof_g_speed = 4
     roof_g_positions = [(490, -35), (80, -35), (225, -35)]
     roof_v_positions = [(1085, -68), (720, -68), (840, -68)]
