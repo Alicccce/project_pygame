@@ -191,14 +191,14 @@ if __name__ == '__main__':
             sc_Text = Tab.render('Yup', True, BLUE, WHITE)
             cOr = sc_Text.get_rect(center=(1000, 200))
             screen.blit(sc_Text, cOr)
-        if millis // 1000 >= 15:
+        if millis // 1000 >= 15 and not board.proov():
             tab = pygame.font.SysFont('arial', 30)
             sc_text = tab.render('Вы нe успели! Попробуете выполнить задание заново?', True, WHITE, BLUE)
             cor = sc_text.get_rect(center=(1000, 200))
             screen.blit(sc_text, cor)
             if button_done.draw(screen, 500, 600) == 1:
                 pygame.display.update()
-            ##button_retry.draw(screen)
+            # button_retry.draw(screen)
 
         pygame.display.flip()
         clock.tick(60)  # Ограничить до 60 кадров в секунду
