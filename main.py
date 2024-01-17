@@ -78,18 +78,29 @@ if __name__ == '__main__':
     s = []
     check = set()
 
+    time_stop = 20
+    time_of_end = 0
+    freeze_timer = False  # Flag to control frozen timer
+
     while running:
         millis = pygame.time.get_ticks() - start_ticks
         secs = millis // 1000
-        if secs >= 31:
-            secs = 30
+        if secs >= time_stop + 1:
+            secs = time_stop
+        if len(s) == 11:
+            if not freeze_timer:  # Freeze the timer only once
+                freeze_timer = True
+                time_of_end = secs
+
+            secs = time_of_end
+
         mins = secs // 60
         secs %= 60
 
         text = font.render('{}:{}'.format(mins, secs), True, WHITE, BLACK)
         textRect = text.get_rect(center=(1000, 400))
 
-        if millis // 1000 >= 30:
+        if millis // 1000 >= time_stop:
             if len(s) != 11:
                 tab = pygame.font.SysFont('arial', 26)
                 sc_text = tab.render('Не получилось :( Попробуете выполнить задание заново?', True, WHITE, BLUE)
@@ -98,7 +109,9 @@ if __name__ == '__main__':
                 if button_done.draw(screen, 500, 600) == 1:
                     pygame.display.update()
 
-        if len(s) == 11:
+        if len(s) == 11 and freeze_timer:
+            time_of_end = secs
+            freeze_timer = True
             tab = pygame.font.SysFont('arial', 26)
             sc_text = tab.render('Всё GOOD', True, WHITE, BLUE)
             cor = sc_text.get_rect(center=(900, 250))
@@ -113,7 +126,6 @@ if __name__ == '__main__':
                 if pygame.mouse.get_pressed()[0]:
                     pygame.draw.circle(drawing_surface, BLUE, event.pos, 7.5)
                     check_and_append(event.pos)
-                    print(event.pos)
 
         for ch in check:
             for hc in checkpoints:
