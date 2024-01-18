@@ -3,6 +3,8 @@ import numpy as np
 from pandas.core.common import flatten
 import copy
 
+
+
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -123,6 +125,8 @@ class Button:
         else:
             pygame.draw.rect(screen, (self.inact_color), (x, y, self.width, self.height))
 
+
+
 def restart():
     global board, start_ticks
     screen.fill(BLACK)
@@ -131,11 +135,7 @@ def restart():
     start_ticks = pygame.time.get_ticks()
     pygame.display.flip()
 
-
-
-
-
-if __name__ == '__main__':
+def main_game():
     pygame.init()
 
     board = Board(100, 'Level 1')
@@ -205,3 +205,9 @@ if __name__ == '__main__':
 
     pygame.quit()
 
+
+
+
+
+if __name__ == '__main__':
+    main_game()
