@@ -24,7 +24,7 @@ LEVEL = {
 
 
 class Board:
-    def __init__(self, cell_size_y, name):
+    def __init__(self, cell_size_y, name, surf):
         self.width = 5
         self.height = 4
         self.board =  copy.deepcopy(LEVEL[name])
@@ -35,6 +35,7 @@ class Board:
         self.small_size_rect_y = cell_size_y  # длин. узких квадратов
         self.row_spacing = 20  # Расстояние между строками
         self.xs = ['black', 'red']
+        self.surf = surf
 
     def set_view(self, left, top, cell_size):
         self.left = left
@@ -107,49 +108,51 @@ class Board:
 
 
 class Button:
-    def __init__(self, x, y, width, height, act_color, inact_color, text=''):
+    def __init__(self, x, y, width, height, act_color, inact_color, surf, text=''):
         self.x, self.y = x, y
         self.width = width
         self.height = height
         self.act_color = act_color
         self.inact_color = inact_color
         self.text = text
+        self.surf = surf
 
     def draw(self, win, x, y):
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
         if y < mouse[1] < y + self.height and x < mouse[0] < x + self.width and click[0] == 1:
-            pygame.draw.rect(screen, (self.act_color), (x, y, self.width, self.height))
-            restart()
+            pygame.draw.rect(self.surf, (self.act_color), (x, y, self.width, self.height))
             return 1
         else:
-            pygame.draw.rect(screen, (self.inact_color), (x, y, self.width, self.height))
+            pygame.draw.rect(self.surf, (self.inact_color), (x, y, self.width, self.height))
 
 
 
-def restart():
+def restart(surf):
     global board, start_ticks
-    screen.fill(BLACK)
-    board = Board(100, 'Level 1')
-    board.render(screen)
+    surf.fill(BLACK)
+    board = Board(100, 'Level 1', surf)
+    board.render(surf)
     start_ticks = pygame.time.get_ticks()
     pygame.display.flip()
 
-def main_game():
+
+def main_game(surf):
     pygame.init()
 
-    board = Board(100, 'Level 1')
-    board.set_view(10, 10, 100)
+
     running = True
     timer_active = True
     time_of_end = False
     size = (1300, 750)
-    screen = pygame.display.set_mode(size)
+    screen = surf
+    board = Board(100, 'Level 1', surf)
+    board.set_view(10, 10, 100)
     clock = pygame.time.Clock()
     start_ticks = pygame.time.get_ticks()  # стартовое время в миллисекундах
 
     # Создаем кнопки один раз вне цикла
-    button_done = Button(300, 600, 260, 50, RED, PINK, 'done')
+    button_done = Button(300, 600, 260, 50, RED, PINK, surf, 'done')
     ##button_retry = Button(500, 510, 260, 50, WHITE, 'не опять, а снова')
 
     # Определите шрифт один раз вне цикла
@@ -178,27 +181,28 @@ def main_game():
                     board.get_click(event.pos)
 
                     # board.proov()
-                board.render(screen)
+                board.render(surf)
 
         # Рендеринг экрана и объектов
-        screen.fill(BLACK)
-        board.render(screen)
-        screen.blit(text, textRect)
+        surf.fill(BLACK)
+        board.render(surf)
+        surf.blit(text, textRect)
 
         if board.proov():
             time_of_end = secs
             Tab = pygame.font.SysFont('arial', 100)
             sc_Text = Tab.render('Yup', True, BLUE, WHITE)
             cOr = sc_Text.get_rect(center=(1000, 200))
-            screen.blit(sc_Text, cOr)
+            surf.blit(sc_Text, cOr)
         if millis // 1000 >= 15 and not board.proov():
             tab = pygame.font.SysFont('arial', 30)
             sc_text = tab.render('Вы нe успели! Попробуете выполнить задание заново?', True, WHITE, BLUE)
             cor = sc_text.get_rect(center=(1000, 200))
-            screen.blit(sc_text, cor)
-            if button_done.draw(screen, 500, 600) == 1:
+            surf.blit(sc_text, cor)
+            if button_done.draw(surf, 500, 600) == 1:
                 pygame.display.update()
-            # button_retry.draw(screen)
+                restart(surf)
+            # button_retry.draw(surf)
 
         pygame.display.flip()
         clock.tick(60)  # Ограничить до 60 кадров в секунду
@@ -209,5 +213,3 @@ def main_game():
 
 
 
-if __name__ == '__main__':
-    main_game()
