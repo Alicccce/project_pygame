@@ -1,8 +1,7 @@
 import pygame
-import numpy
-from pandas.core.common import flatten
 import os
 import sys
+
 
 
 
@@ -50,9 +49,10 @@ def check_and_append(event_pos):
 
 
 def restart():
-    global s, check, start_ticks
+    global s, check, start_ticks, freeze_timer, secs
     s = []
     check = set()
+    freeze_timer = False
     start_ticks = pygame.time.get_ticks()
     drawing_surface.fill((0, 0, 0, 0))
     pygame.display.flip()
@@ -85,6 +85,7 @@ if __name__ == '__main__':
     freeze_timer = False  # Flag to control frozen timer
 
     while running:
+        screen.fill(BLACK)
         millis = pygame.time.get_ticks() - start_ticks
         secs = millis // 1000
         if secs >= time_stop + 1:
@@ -99,8 +100,8 @@ if __name__ == '__main__':
         mins = secs // 60
         secs %= 60
 
-        text = font.render('{}:{}'.format(mins, secs), True, WHITE, BLACK)
-        textRect = text.get_rect(center=(1000, 400))
+        # text = font.render('{}:{}'.format(mins, secs), True, WHITE, BLACK)
+        # textRect = text.get_rect(center=(1000, 400))
 
         if millis // 1000 >= time_stop:
             if len(s) != 11:
@@ -110,6 +111,7 @@ if __name__ == '__main__':
                 screen.blit(sc_text, cor)
                 if button_done.draw(screen, 500, 600) == 1:
                     pygame.display.update()
+
 
         if len(s) == 11 and freeze_timer:
             time_of_end = secs
@@ -125,7 +127,7 @@ if __name__ == '__main__':
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
             if event.type == pygame.MOUSEMOTION or event.type == pygame.MOUSEBUTTONDOWN:
-                if pygame.mouse.get_pressed()[0]:
+                if pygame.mouse.get_pressed()[0] and (millis // 1000 < time_stop and len(s) != 11):
                     pygame.draw.circle(drawing_surface, BLUE, event.pos, 7.5)
                     check_and_append(event.pos)
 
@@ -133,6 +135,13 @@ if __name__ == '__main__':
             for hc in checkpoints:
                 if ch == hc and ch not in s:
                     s.append(ch)
+
+
+
+
+        # Render the new timer text
+        text = font.render('{}:{}'.format(mins, secs), True, WHITE)
+        textRect = text.get_rect(center=(1000, 400))
 
         screen.blit(text, textRect)
         screen.blit(image, (0, 0))
