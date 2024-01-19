@@ -13,23 +13,24 @@ PINK = (255, 100, 100)
 
 
 class Button:
-    def __init__(self, x, y, width, height, act_color, inact_color, text=''):
+    def __init__(self, x, y, width, height, act_color, inact_color,surf,  text='' ):
         self.x, self.y = x, y
         self.width = width
         self.height = height
         self.act_color = act_color
         self.inact_color = inact_color
         self.text = text
+        self.surf = surf
 
     def draw(self, win, x, y):
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
         if y < mouse[1] < y + self.height and x < mouse[0] < x + self.width and click[0] == 1:
-            pygame.draw.rect(screen, (self.act_color), (x, y, self.width, self.height))
-            restart()
+            pygame.draw.rect(self.surf, (self.act_color), (x, y, self.width, self.height))
+            restart(self.surf)
             return 1
         else:
-            pygame.draw.rect(screen, (self.inact_color), (x, y, self.width, self.height))
+            pygame.draw.rect(self.surf, (self.inact_color), (x, y, self.width, self.height))
 
 
 def load_image(name, colorkey=None):
@@ -41,36 +42,30 @@ def load_image(name, colorkey=None):
     return image
 
 
-def check_and_append(event_pos):
+def check_and_append(event_pos, checkpoints, check):
     for x, y in checkpoints:
         if abs(x - event_pos[0]) <= 30 and abs(y - event_pos[1]) <= 30:
             check.add((x, y))
             break
 
 
-def restart():
-    global s, check, start_ticks, freeze_timer, secs
-    s = []
-    check = set()
-    freeze_timer = False
-    start_ticks = pygame.time.get_ticks()
-    drawing_surface.fill((0, 0, 0, 0))
-    pygame.display.flip()
+def restart(surf):
+    game_two(surf)
 
 
-if __name__ == '__main__':
+def game_two(surf):
     pygame.init()
 
     running = True
     size = (1300, 750)
     image = load_image("itog.png")
-    screen = pygame.display.set_mode(size)
+    screen = surf
     drawing_surface = pygame.Surface(image.get_size(), pygame.SRCALPHA)
 
     clock = pygame.time.Clock()
     start_ticks = pygame.time.get_ticks()  # стартовое время в миллисекундах
     # Создаем кнопки один раз вне цикла
-    button_done = Button(300, 600, 260, 50, RED, PINK, 'done')
+    button_done = Button(300, 600, 260, 50, RED, PINK, surf, 'done')
     # Определите шрифт один раз вне цикла
     font = pygame.font.Font('freesansbold.ttf', 64)
 
@@ -129,7 +124,7 @@ if __name__ == '__main__':
             if event.type == pygame.MOUSEMOTION or event.type == pygame.MOUSEBUTTONDOWN:
                 if pygame.mouse.get_pressed()[0] and (millis // 1000 < time_stop and len(s) != 11):
                     pygame.draw.circle(drawing_surface, BLUE, event.pos, 7.5)
-                    check_and_append(event.pos)
+                    check_and_append(event.pos, checkpoints, check)
 
         for ch in check:
             for hc in checkpoints:

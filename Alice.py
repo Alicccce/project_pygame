@@ -129,10 +129,10 @@ class Button:
 
 
 def restart(surf):
-    main_game(surf)
+    game_one(surf)
 
 
-def main_game(surf):
+def game_one(surf):
     pygame.init()
 
 
