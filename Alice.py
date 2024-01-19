@@ -129,12 +129,7 @@ class Button:
 
 
 def restart(surf):
-    global board, start_ticks
-    surf.fill(BLACK)
-    board = Board(100, 'Level 1', surf)
-    board.render(surf)
-    start_ticks = pygame.time.get_ticks()
-    pygame.display.flip()
+    main_game(surf)
 
 
 def main_game(surf):
