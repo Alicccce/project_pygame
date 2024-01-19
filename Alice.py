@@ -1,5 +1,4 @@
 import pygame
-import numpy as np
 from pandas.core.common import flatten
 import copy
 
@@ -134,13 +133,8 @@ def restart(surf):
 
 def game_one(surf):
     pygame.init()
-
-
     running = True
-    timer_active = True
     time_of_end = False
-    size = (1300, 750)
-    screen = surf
     board = Board(100, 'Level 1', surf)
     board.set_view(10, 10, 100)
     clock = pygame.time.Clock()
