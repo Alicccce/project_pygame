@@ -2,9 +2,6 @@ import pygame
 import os
 import sys
 
-
-
-
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -13,7 +10,7 @@ PINK = (255, 100, 100)
 
 
 class Button:
-    def __init__(self, x, y, width, height, act_color, inact_color,surf,  text='' ):
+    def __init__(self, x, y, width, height, act_color, inact_color, surf, text=''):
         self.x, self.y = x, y
         self.width = width
         self.height = height
@@ -80,7 +77,7 @@ def game_two(surf):
     freeze_timer = False  # Flag to control frozen timer
 
     while running:
-        screen.fill(BLACK)
+        screen.fill((100, 150, 50))
         millis = pygame.time.get_ticks() - start_ticks
         secs = millis // 1000
         if secs >= time_stop + 1:
@@ -107,7 +104,6 @@ def game_two(surf):
                 if button_done.draw(screen, 500, 600) == 1:
                     pygame.display.update()
 
-
         if len(s) == 11 and freeze_timer:
             time_of_end = secs
             freeze_timer = True
@@ -130,9 +126,6 @@ def game_two(surf):
             for hc in checkpoints:
                 if ch == hc and ch not in s:
                     s.append(ch)
-
-
-
 
         # Render the new timer text
         text = font.render('{}:{}'.format(mins, secs), True, WHITE)
