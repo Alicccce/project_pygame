@@ -1,7 +1,6 @@
 import pygame
 import os
 
-
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -9,12 +8,10 @@ BLUE = (0, 0, 255)
 PINK = (255, 100, 100)
 
 
-
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
     image = pygame.image.load(fullname)
     return image
-
 
 
 def load(surf):
@@ -30,7 +27,7 @@ def load(surf):
     finished_rect = finished.get_rect(center=(640, 280))
 
     while running:
-        surf.fill(BLACK)
+        surf.fill((10, 200, 150))
         rotated_img = pygame.transform.rotozoom(img_bus_load, angle, 1)
         surf.blit(finished, finished_rect)
         angle += 1  #
@@ -38,7 +35,7 @@ def load(surf):
             angle = 0
 
         surf.blit(rotated_img,
-                  (size[0] // 2 - rotated_img.get_width() // 2, size[1] // 2 - rotated_img.get_height() // 2))
+                  (size[0] // 2 - rotated_img.get_width() // 2, size[1] // 2 - rotated_img.get_height() // 2 + 20))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
