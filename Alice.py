@@ -38,7 +38,7 @@ def ox_operations(s):  # функция генерации абциссы на �
         return x, s
 
 
-def smena(x, y, bus, surf): # функция вывода "окончания" основной игры
+def smena(x, y, surf): # функция вывода "окончания" основной игры
     buyt = Button(500, 600, 260, 50, GREEN, LIGHT_GREEN, surf,'done')
     buyt.draw(500, 600)
     s = pygame.transform.scale(load_image('yup.jpg'), (200, 200))
@@ -49,9 +49,6 @@ def smena(x, y, bus, surf): # функция вывода "окончания" �
 
 def restart(screen):
     global speed_car
-    #pygame.display.update()
-    #speed_car = 12
-    #ox_per =  [i for i in range(WIDTH + 10, WIDTH + 5001, 150)]
     speed_car = 12
     Main_game(screen)
 
@@ -133,7 +130,7 @@ class Cars(pygame.sprite.Sprite):
         self.rect.x -= speed_car
         p = choice(self.ox_per)  # выбор абциссы старта машинки при достижении левой границы
         if pygame.sprite.collide_mask(self, bus): # если машинки сталкнулись
-            smena(self.rect.x, self.rect.y, bus, surf)
+            smena(self.rect.x, self.rect.y, surf)
             speed_car = 0
         # далее проверяется то, когда машинки заезжают за стену
         if self.rect.x + self.rect.width < 0 and p not in self.forx:
@@ -147,15 +144,11 @@ class Cars(pygame.sprite.Sprite):
 
 def Main_game(surf):
     for_x = []
-    prov = True
     ox = [i for i in range(WIDTH + 10, WIDTH + 5001, 150)]
-
-    sprts_cars = pygame.sprite.Group()  # группа спрайтов машинок
     all_sprites = pygame.sprite.Group()
     pygame.init()
     screen = surf
     clock = pygame.time.Clock()
-    start_ticks = pygame.time.get_ticks()
     bus = Bus(all_sprites)
     cor_y = [90, 200, 310, 420, 530, 640] # список ординат для полос дороги
     x1, x2 = ox_operations(ox)[0], ox_operations(ox)[0]
@@ -218,6 +211,7 @@ def Main_game(surf):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+                sys.exit()
 
         pygame.display.flip()
         clock.tick(60)  # Ограничить до 60 кадров в секунду
