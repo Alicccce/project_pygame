@@ -20,22 +20,29 @@ def load(surf):
     running = True
     size = (1300, 750)
     clock = pygame.time.Clock()
-    img_bus_load = load_image('bus_mini.png')
-    angle = 0
     FONT = pygame.font.SysFont("Roboto", 80)
-    finished = FONT.render("Загрузка", True, "white")
+    finished = FONT.render("Смурфики", True, "white")
     finished_rect = finished.get_rect(center=(640, 280))
+    imgtr = load_image('trop.png')
+    imgg = load_image('roof_g.png')
+    imgv = load_image('roof_v.png')
+    xx, yy = 0, 45
+
+
 
     while running:
-        surf.fill((10, 200, 150))
-        rotated_img = pygame.transform.rotozoom(img_bus_load, angle, 1)
+        surf.fill((150, 190, 100))
         surf.blit(finished, finished_rect)
-        angle += 1  #
-        if angle >= 360:
-            angle = 0
+        screen.blit(imgtr, (xx, yy))
+        surf.blit(imgg,(490, -35))
+        surf.blit(imgg, (80, -35))
+        surf.blit(imgg, (225, -35))
+        surf.blit(imgv, (1085, -68))
+        surf.blit(imgv, (720, -68))
+        surf.blit(imgv, (840, -68))
 
-        surf.blit(rotated_img,
-                  (size[0] // 2 - rotated_img.get_width() // 2, size[1] // 2 - rotated_img.get_height() // 2 + 20))
+
+
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
