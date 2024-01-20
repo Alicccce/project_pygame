@@ -1,101 +1,12 @@
 import pygame
-from pandas.core.common import flatten
-import copy
+import os
+import sys
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 PINK = (255, 100, 100)
-LEVEL = {
-    'Level 1': [
-        [0, 1, 0, 1, 0, 1, 0, 1, 0],
-        [0, 1, 0],
-        [0, 1, 0],
-        [0, 1, 0, 1, 0, 1, 0, 1, 0]
-    ]
-}
-
-
-class Board:
-    def __init__(self, cell_size_y, name, surf):
-        self.width, self.height = 5, 4
-        self.board = copy.deepcopy(LEVEL[name])
-        self.left, self.top = 10, 10
-        self.cell_size = cell_size_y  # размер больших квадратов
-        self.small_size_rect_x = 50  # ширина узких квадратов
-        self.small_size_rect_y = cell_size_y  # длина узких квадратов
-        self.row_spacing = 20  # Расстояние между строками
-        self.xs = ['black', 'red']
-        self.surf = surf
-
-    def set_view(self, left, top, cell_size):
-        self.left = left
-        self.top = top
-        self.cell_size = cell_size
-
-    def render(self, screen):
-        top_y = self.top
-        for row_index, row in enumerate(self.board):
-            top_x = self.left
-            row_height = 0  # Высота текущей строки
-            for col_index, cell in enumerate(row):
-                if cell == 1:
-                    pygame.draw.rect(screen, WHITE, (top_x, top_y, self.small_size_rect_x, self.small_size_rect_y), 1)
-                    top_x += self.small_size_rect_x
-                    row_height = max(row_height, self.small_size_rect_y)
-                else:
-                    color = RED if cell == 5 else WHITE
-                    pygame.draw.rect(screen, color, (top_x, top_y, self.cell_size, self.cell_size),
-                                     1 if cell == 0 else 0)
-                    top_x += self.cell_size
-                    row_height = max(row_height, self.cell_size)
-            top_y += row_height + self.row_spacing
-
-    def get_cell(self, mouse_pos):
-        x, y = mouse_pos
-        top_y = self.top
-
-        for row_index, row in enumerate(self.board):
-            top_x = self.left
-            row_height = 0
-
-            # Определяем высоту строки, чтобы использовать ее позже для проверки попадания
-            for cell in row:
-                if cell == 1:
-                    row_height = max(row_height, self.small_size_rect_y)
-                else:
-                    row_height = max(row_height, self.cell_size)
-
-            # Проверяем попадание в ячейки текущей строки
-            for col_index, cell in enumerate(row):
-                cell_width = self.small_size_rect_x if cell == 1 else self.cell_size
-                if top_x <= x < top_x + cell_width and top_y <= y < top_y + row_height:
-                    return (row_index, col_index)
-                top_x += cell_width
-
-            # Переходим к следующей строке, учитывая промежуток между строками
-            top_y += row_height + self.row_spacing
-
-        return None
-
-    def on_click(self, cell_coords):
-        if cell_coords is not None:
-            row, col = cell_coords
-            if self.board[row][col] == 0:
-                self.board[row][col] = 5
-                print(5)
-
-    def get_click(self, mouse_pos):
-        cell = self.get_cell(mouse_pos)
-        self.on_click(cell)
-
-    def proov(self):
-        arr = list(flatten(self.board))
-        if 0 in arr:
-            return False
-        else:
-            return True
 
 
 class Button:
@@ -137,71 +48,106 @@ class Button:
         self.surf.blit(text_surf, text_rect)
 
 
+def load_image(name, colorkey=None):
+    fullname = os.path.join('data', name)
+    if not os.path.isfile(fullname):
+        print(f"Файл с изображением '{fullname}' не найден")
+        sys.exit()
+    image = pygame.image.load(fullname)
+    return image
+
+
+def check_and_append(event_pos, checkpoints, check):
+    for x, y in checkpoints:
+        if abs(x - event_pos[0]) <= 30 and abs(y - event_pos[1]) <= 30:
+            check.add((x, y))
+            break
+
+
 def restart(surf):
-    game_one(surf)
+    game_two(surf)
 
 
-def game_one(surf):
+def game_two(surf):
     pygame.init()
+
     running = True
-    time_of_end = False
-    board = Board(100, 'Level 1', surf)
-    board.set_view(10, 10, 100)
+    size = (1300, 750)
+    image = load_image('itog.png')
+    screen = surf
+    drawing_surface = pygame.Surface(image.get_size(), pygame.SRCALPHA)
+
     clock = pygame.time.Clock()
     start_ticks = pygame.time.get_ticks()  # стартовое время в миллисекундах
-
     # Создаем кнопки один раз вне цикла
-    button_done = Button(850, 600, 260, 50, RED, PINK, surf, 'не опять, а снова')
-    button_contin = Button(860, 650, 260, 50, RED, PINK, surf, 'едем дальше')
-
+    button_done = Button(300, 600, 260, 50, RED, PINK, surf, 'done')
+    button_contin = Button(840, 600, 260, 50, RED, PINK, surf, 'едем дальше')
     # Определите шрифт один раз вне цикла
     font = pygame.font.Font('freesansbold.ttf', 64)
 
+    checkpoints = [(320, 87), (221, 262), (68, 432), (441, 423), (68, 267), (263, 185), (458, 103), (197, 421),
+                   (35, 317),
+                   (497, 375), (420, 495)]
+    s, check = [], set()
+
+    time_stop = 20
+    time_of_end = 0
+    freeze_timer = False  # Flag to control frozen timer
+
     while running:
+        screen.fill((100, 150, 50))
         millis = pygame.time.get_ticks() - start_ticks
         secs = millis // 1000
-        if secs >= 16:
-            secs = 15
-        if board.proov():
+        if secs >= time_stop + 1:
+            secs = time_stop
+        if len(s) == 11:
+            if not freeze_timer:  # Freeze the timer only once
+                freeze_timer = True
+                time_of_end = secs
             secs = time_of_end
+
         mins = secs // 60
         secs %= 60
 
-        # Обновляем текст один раз на каждый тик
-        text = font.render('{}:{}'.format(mins, secs), True, WHITE, (100, 100, 100))
-        textRect = text.get_rect(center=(1000, 280))
+        if millis // 1000 >= time_stop:
+            if len(s) != 11:
+                tab = pygame.font.SysFont('arial', 26)
+                sc_text = tab.render('Не получилось :( Попробуете выполнить задание заново?', True, WHITE, BLUE)
+                screen.blit(sc_text, (900, 250))
+                if button_done.draw(500, 600) == 1:
+                    pygame.display.update()
+
+        if len(s) == 11 and freeze_timer:
+            time_of_end = secs
+            freeze_timer = True
+            tab = pygame.font.SysFont('arial', 26)
+            sc_text = tab.render('Вам удалось закрасить все необходимые места!', True, WHITE, BLUE)
+            screen.blit(sc_text, (640, 320))
+            if button_contin.draw2(840, 600) == 2:
+                pygame.display.update()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
-                if secs < 15:
-                    board.get_click(event.pos)
+            if event.type == pygame.MOUSEMOTION or event.type == pygame.MOUSEBUTTONDOWN:
+                if pygame.mouse.get_pressed()[0] and (millis // 1000 < time_stop and len(s) != 11):
+                    pygame.draw.circle(drawing_surface, BLUE, event.pos, 7.5)
+                    check_and_append(event.pos, checkpoints, check)
 
-                board.render(surf)
+        for ch in check:
+            for hc in checkpoints:
+                if ch == hc and ch not in s:
+                    s.append(ch)
 
-        # Рендеринг экрана и объектов
-        surf.fill((100, 100, 100))
-        board.render(surf)
-        surf.blit(text, textRect)
+        # Render the new timer text
+        text = font.render('{}:{}'.format(mins, secs), True, WHITE)
+        textRect = text.get_rect(center=(900, 250))
 
-        if board.proov():
-            time_of_end = secs
-            Tab = pygame.font.SysFont('arial', 85)
-            sc_Text = Tab.render('Yup', True, BLUE, WHITE)
-            cOr = sc_Text.get_rect(center=(1000, 550))
-            surf.blit(sc_Text, cOr)
-            if button_contin.draw2(860, 650) == 2:
-                pygame.display.update()
-                # СНОВА К АВТОБУСУ
-        if millis // 1000 >= 15 and not board.proov():
-            tab = pygame.font.SysFont('arial', 30)
-            sc_text = tab.render('Вы нe успели! Попробуете выполнить задание заново?', True, WHITE, BLUE)
-            surf.blit(sc_text, (130, 610))
-            if button_done.draw(850, 600) == 1:
-                pygame.display.update()
-                restart(surf)
+        screen.blit(text, textRect)
+        screen.blit(image, (0, 0))
+        screen.blit(drawing_surface, (0, 0))
 
         pygame.display.flip()
         clock.tick(60)  # Ограничить до 60 кадров в секунду
