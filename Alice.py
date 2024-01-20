@@ -1,196 +1,225 @@
 import pygame
-import numpy as np
-from pandas.core.common import flatten
-import copy
+import os
+import sys
+from random import *
+
 
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
+GREEN = (0, 255, 0)
 PINK = (255, 100, 100)
-LEVEL = {
-    'Level 1': [
-        [0, 1, 0, 1, 0, 1, 0, 1, 0],
-        [0, 1, 0],
-        [0, 1, 0],
-        [0, 1, 0, 1, 0, 1, 0, 1, 0]
-    ]
-}
+LIGHT_GREEN = (100, 200, 100)
+HEIGHT, WIDTH = 750, 1300
+for_x = [] # список "занятых" абцисс машинок
+prov = True
+ox = [i for i in range(WIDTH + 10, WIDTH + 5001, 150)] # ось ох (координата машинки),
+# которая генерирется и появляется на n_ом расстоянии от осн. экрана
+
+sprts_cars = pygame.sprite.Group() # группа спрайтов машинок
+all_sprites = pygame.sprite.Group()
+#sound = pygame.mixer.Sound('avaria2.wav')
 
 
-class Board:
-    def __init__(self, cell_size_y, name, surf):
-        self.width = 5
-        self.height = 4
-        self.board =  copy.deepcopy(LEVEL[name])
-        self.left = 10
-        self.top = 10
-        self.cell_size = cell_size_y  # размер больших квадратов
-        self.small_size_rect_x = 50  # ширина узких квадратов
-        self.small_size_rect_y = cell_size_y  # длин. узких квадратов
-        self.row_spacing = 20  # Расстояние между строками
-        self.xs = ['black', 'red']
-        self.surf = surf
+def load_image(name, colorkey=None):
+    fullname = os.path.join('data', name)
+    # если файл не существцует, то выходим
+    if not os.path.isfile(fullname):
+        print(f"Файл с изображением '{fullname}' не найден")
+        sys.exit()
+    image = pygame.image.load(fullname)
+    return image
 
-    def set_view(self, left, top, cell_size):
-        self.left = left
-        self.top = top
-        self.cell_size = cell_size
 
-    def render(self, screen):
-        # screen.fill(BLACK)
-        top_y = self.top
-        for row_index, row in enumerate(self.board):
-            top_x = self.left
-            row_height = 0  # Высота текущей строки
-            for col_index, cell in enumerate(row):
-                if cell == 1:
-                    pygame.draw.rect(screen, WHITE, (top_x, top_y, self.small_size_rect_x, self.small_size_rect_y), 1)
-                    top_x += self.small_size_rect_x
-                    row_height = max(row_height, self.small_size_rect_y)
-                else:
-                    color = RED if cell == 5 else WHITE
-                    pygame.draw.rect(screen, color, (top_x, top_y, self.cell_size, self.cell_size),
-                                     1 if cell == 0 else 0)
-                    top_x += self.cell_size
-                    row_height = max(row_height, self.cell_size)
-            top_y += row_height + self.row_spacing
+def ox_operations(s):  # функция генерации абциссы на старте у машинки
+    if s != []:
+        x = choice(s)
+        s.remove(x)
+        return x, s
 
-    def get_cell(self, mouse_pos):
-        x, y = mouse_pos
-        top_y = self.top
 
-        for row_index, row in enumerate(self.board):
-            top_x = self.left
-            row_height = 0
+def smena(x, y): # функция вывода "окончания" основной игры
+    global bu
+    buyt = Button(500, 600, 260, 50, GREEN, LIGHT_GREEN, 'done')
+    buyt.draw(500, 600)
+    s = pygame.transform.scale(load_image('yup.jpg'), (200, 200))
+    screen.blit(s, (530, 250))
+    bu = pygame.transform.scale(load_image('boo.png'), (200, 200)) # картинка взрыва
+    screen.blit(bu, (x - 70, y - 50))
 
-            # Определяем высоту строки, чтобы использовать ее позже для проверки попадания
-            for cell in row:
-                if cell == 1:
-                    row_height = max(row_height, self.small_size_rect_y)
-                else:
-                    row_height = max(row_height, self.cell_size)
 
-            # Проверяем попадание в ячейки текущей строки
-            for col_index, cell in enumerate(row):
-                cell_width = self.small_size_rect_x if cell == 1 else self.cell_size
-                if top_x <= x < top_x + cell_width and top_y <= y < top_y + row_height:
-                    return (row_index, col_index)
-                top_x += cell_width
+def restart(screen):
+    #pygame.display.update()
+    #speed_car = 12
+    ox_per = ox
+    Main_game(screen)
 
-            # Переходим к следующей строке, учитывая промежуток между строками
-            top_y += row_height + self.row_spacing
 
-        return None
+class the_next_stat_is(pygame.sprite.Sprite):
+    image = load_image('stat.png')
 
-    def on_click(self, cell_coords):
-        if cell_coords is not None:
-            row, col = cell_coords
-            if self.board[row][col] == 0:
-                self.board[row][col] = 5
-                print(5)
+    def __init__(self, all_sprites):
+        super().__init__(all_sprites)
+        self.image = the_next_stat_is.image
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = 150, 640
+        self.mask_car = pygame.mask.from_surface(self.image)
 
-    def get_click(self, mouse_pos):
-        cell = self.get_cell(mouse_pos)
-        self.on_click(cell)
-
-    def proov(self):
-        arr = list(flatten(self.board))
-        if 0 in arr:
-            return False
-        else:
-            return True
+    def update(self, speed):
+        if self.rect.x + self.rect.width < HEIGHT // 2:
+            self.rect.x -= 8
 
 
 class Button:
-    def __init__(self, x, y, width, height, act_color, inact_color, surf, text=''):
+    def __init__(self, x, y, width, height, act_color, inact_color, text=''):
         self.x, self.y = x, y
-        self.width = width
-        self.height = height
+        self.width, self.height = width, height
+        self.rect = pygame.Rect(x, y, width, height)
         self.act_color = act_color
         self.inact_color = inact_color
         self.text = text
-        self.surf = surf
 
-    def draw(self, win, x, y):
+    def draw(self, x, y):
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
         if y < mouse[1] < y + self.height and x < mouse[0] < x + self.width and click[0] == 1:
-            pygame.draw.rect(self.surf, (self.act_color), (x, y, self.width, self.height))
-            return 1
+            pygame.draw.rect(screen, (self.act_color), self.rect)
+            restart(screen)
         else:
-            pygame.draw.rect(self.surf, (self.inact_color), (x, y, self.width, self.height))
+            pygame.draw.rect(screen, (self.inact_color), self.rect)
+        font = pygame.font.Font(None, 35)
+        text_surf = font.render(self.text, True, WHITE)
+        text_rect = text_surf.get_rect(center=self.rect.center)
+        screen.blit(text_surf, text_rect)
 
 
-def restart(surf):
-    main_game(surf)
+class Bus(pygame.sprite.Sprite):
+    image = load_image('bus_osn.png')
+
+    def __init__(self, *group):
+        # НЕОБХОДИМО вызвать конструктор родительского класса Sprite. Это очень важно!!!
+        super().__init__(*group)
+        self.image = Bus.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 10
+        self.rect.y = HEIGHT // 2 + 15
+        self.mask_bus = pygame.mask.from_surface(self.image)
+
+    def update(self, keys):
+        global speed_car
+        # ниже контроль движения автобуса
+        if keys[pygame.K_w] and self.rect.y + 14 >= 100 and speed_car != 0:
+            self.rect.y -= 6
+        if keys[pygame.K_s] and self.rect.y + 111 <= 745 and speed_car != 0:
+            self.rect.y += 6
 
 
-def main_game(surf):
+class Cars(pygame.sprite.Sprite):
+    def __init__(self, all_sprites, name, ox_per):  # name = ('png', (x, y))
+        super().__init__(all_sprites)
+        self.ox_per = ox_per
+        self.image = load_image(name[0])  # считываем назвнаие
+        self.rect = self.image.get_rect()
+        self.rect.x = name[1][0]  # считаваем абциссу
+        self.rect.y = name[1][1]  # считаваем ординату
+        self.mask_car = pygame.mask.from_surface(self.image)
+        self.add(sprts_cars) # добавление текущей машинки в список спрайтов
+        for_x.append(self.rect.x) # добавление "использованной" координаты х для машинки
+
+    def update(self, speed):
+        global speed_car, ox_per
+        cor_y = [90, 200, 310, 420, 530, 640]
+        self.rect.x -= speed_car
+        p = choice(self.ox_per)  # выбор абциссы старта машинки при достижении левой границы
+        if pygame.sprite.collide_mask(self, bus): # если машинки сталкнулись
+            smena(self.rect.x, self.rect.y)
+            speed_car = 0
+        # далее проверяется то, когда машинки заезжают за стену
+        if self.rect.x + self.rect.width < 0 and p not in for_x:
+            self.rect.x = (p)
+            self.rect.y = choice(cor_y)
+            if len(self.ox_per) == 1:
+                the_next_stat_is(all_sprites, self.ox_per)
+            else:
+                for_x.append(self.rect.x), self.ox_per.remove(self.rect.x)
+
+
+def Main_game(surf):
+    global screen, bus, speed_car, ox_per
     pygame.init()
+    screen = surf
+    clock = pygame.time.Clock()
+    start_ticks = pygame.time.get_ticks()
+
+    #all_sprites = pygame.sprite.Group()
+    bus = Bus(all_sprites)
+
+    cor_y = [90, 200, 310, 420, 530, 640] # список ординат для полос дороги
+    x1, x2 = ox_operations(ox)[0], ox_operations(ox)[0]
+    x3, x4 = ox_operations(ox)[0], ox_operations(ox)[0]
+    x5, x6 = ox_operations(ox)[0], ox_operations(ox)[0]
+    for name in [('red_car.png', (x1, choice(cor_y))),
+                 ('yel_car.png', (x2, choice(cor_y))),
+                 ('gray_car.png', (x3, choice(cor_y))),
+                 ('black_car.png', (x4, choice(cor_y))),
+                 ('purp_car.png', (x5, choice(cor_y))),
+                 ('white_car.png', (x6, choice(cor_y)))]:
+            Cars(all_sprites, name, ox)  # передаём в name имя файла и координаты запуска
+
+    imgg = load_image('roof_g.png')
+    imgv = load_image('roof_v.png')
+    imgtr = load_image('trop.png')
 
     running = True
-    timer_active = True
-    time_of_end = False
-    size = (1300, 750)
-    screen = surf
-    board = Board(100, 'Level 1', surf)
-    board.set_view(10, 10, 100)
-    clock = pygame.time.Clock()
-    start_ticks = pygame.time.get_ticks()  # стартовое время в миллисекундах
 
-    # Создаем кнопки один раз вне цикла
-    button_done = Button(300, 600, 260, 50, RED, PINK, surf, 'done')
-    ##button_retry = Button(500, 510, 260, 50, WHITE, 'не опять, а снова')
-
-    # Определите шрифт один раз вне цикла
-    font = pygame.font.Font('freesansbold.ttf', 64)
+    xx, yy = 0, 45 # координаты расположения изображения дороги
+    X1, Y1 = 1280, 45
+    speed_car = 12
+    roof_g_speed = 4
+    roof_g_positions = [(490, -35), (80, -35), (225, -35)]
+    roof_v_positions = [(1085, -68), (720, -68), (840, -68)]
 
     while running:
-        millis = pygame.time.get_ticks() - start_ticks
-        secs = millis // 1000
-        if secs >= 16:
-            secs = 15
-        if board.proov():
-            secs = time_of_end
-        mins = secs // 60
-        secs %= 60
+        screen.fill((150, 190, 100))
 
-        # Обновляем текст один раз на каждый тик
-        text = font.render('{}:{}'.format(mins, secs), True, WHITE, BLACK)
-        textRect = text.get_rect(center=(1000, 400))
+        screen.blit(imgtr, (xx, yy))
+        screen.blit(imgtr, (X1, Y1))
+        xx -= roof_g_speed
+        X1 -= roof_g_speed
+        # позиции для домиков (крыш) и дороги
+        # Дополнительная позиция чтобы создать зацикленную анимацию
+
+        # Проверка, выходит ли первая дорога за границы видимости
+        if xx + imgtr.get_width() <= 0:
+            xx = X1 + imgtr.get_width()
+        if X1 + imgtr.get_width() <= 0:
+            X1 = xx + imgtr.get_width()
+        for position in roof_g_positions:
+            screen.blit(imgg, position)
+        for position in roof_v_positions:
+            screen.blit(imgv, position)
+
+        # Движение домиков "roof_g"
+        roof_g_positions = [(x - roof_g_speed, y) for x, y in roof_g_positions]
+        # При достижении края экрана, перемещаем домик в конец очереди для создания непрерывной ленты
+        roof_g_positions = [((WIDTH, y) if x - 35 < -imgg.get_width() - 100 else (x, y)) for x, y in roof_g_positions]
+
+        roof_v_positions = [(x - roof_g_speed, y) for x, y in roof_v_positions]
+        # Делаем то же для "roof_v"
+        roof_v_positions = [((WIDTH, y) if x < - imgv.get_width() - 100 else (x, y)) for x, y in roof_v_positions]
+
+
+        keys = pygame.key.get_pressed()
+        all_sprites.update(keys)
+        all_sprites.draw(screen)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos
-                if secs < 15:
-                    board.get_click(event.pos)
-                board.render(surf)
-
-        # Рендеринг экрана и объектов
-        surf.fill(BLACK)
-        board.render(surf)
-        surf.blit(text, textRect)
-
-        if board.proov():
-            time_of_end = secs
-            Tab = pygame.font.SysFont('arial', 100)
-            sc_Text = Tab.render('Yup', True, BLUE, WHITE)
-            cOr = sc_Text.get_rect(center=(1000, 200))
-            surf.blit(sc_Text, cOr)
-        if millis // 1000 >= 15 and not board.proov():
-            tab = pygame.font.SysFont('arial', 30)
-            sc_text = tab.render('Вы нe успели! Попробуете выполнить задание заново?', True, WHITE, BLUE)
-            cor = sc_text.get_rect(center=(1000, 200))
-            surf.blit(sc_text, cor)
-            if button_done.draw(surf, 500, 600) == 1:
-                pygame.display.update()
-                restart(surf)
 
         pygame.display.flip()
         clock.tick(60)  # Ограничить до 60 кадров в секунду
 
-    pygame.quit()
+    pygame.display.update()
