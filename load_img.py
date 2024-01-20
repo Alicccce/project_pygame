@@ -1,13 +1,13 @@
 import pygame
 import os
-import sys
+
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 PINK = (255, 100, 100)
-# FONT = pygame.font.SysFont("Roboto", 100)
+
 
 
 def load_image(name, colorkey=None):
