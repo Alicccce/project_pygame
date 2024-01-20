@@ -2,8 +2,6 @@ import pygame
 from pandas.core.common import flatten
 import copy
 
-
-
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -19,14 +17,11 @@ LEVEL = {
 }
 
 
-
-
-
 class Board:
     def __init__(self, cell_size_y, name, surf):
         self.width = 5
         self.height = 4
-        self.board =  copy.deepcopy(LEVEL[name])
+        self.board = copy.deepcopy(LEVEL[name])
         self.left = 10
         self.top = 10
         self.cell_size = cell_size_y  # размер больших квадратов
@@ -126,7 +121,6 @@ class Button:
             pygame.draw.rect(self.surf, (self.inact_color), (x, y, self.width, self.height))
 
 
-
 def restart(surf):
     game_one(surf)
 
@@ -197,8 +191,3 @@ def game_one(surf):
         clock.tick(60)  # Ограничить до 60 кадров в секунду
 
     pygame.quit()
-
-
-
-
-

@@ -4,4 +4,4 @@ from game_two import game_two
 
 
 screen = pygame.display.set_mode((1300, 750))
-game_one(screen)
+game_two(screen)
