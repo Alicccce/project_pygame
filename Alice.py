@@ -13,10 +13,8 @@ GREEN = (0, 255, 0)
 PINK = (255, 100, 100)
 LIGHT_GREEN = (100, 200, 100)
 HEIGHT, WIDTH = 750, 1300
-for_x = [] # список "занятых" абцисс машинок
-prov = True
-ox = [i for i in range(WIDTH + 10, WIDTH + 5001, 150)] # ось ох (координата машинки),
-# которая генерирется и появляется на n_ом расстоянии от осн. экрана
+speed_car = 12
+
 
 sprts_cars = pygame.sprite.Group() # группа спрайтов машинок
 all_sprites = pygame.sprite.Group()
@@ -40,20 +38,21 @@ def ox_operations(s):  # функция генерации абциссы на �
         return x, s
 
 
-def smena(x, y): # функция вывода "окончания" основной игры
-    global bu
-    buyt = Button(500, 600, 260, 50, GREEN, LIGHT_GREEN, 'done')
+def smena(x, y, bus, surf): # функция вывода "окончания" основной игры
+    buyt = Button(500, 600, 260, 50, GREEN, LIGHT_GREEN, surf,'done')
     buyt.draw(500, 600)
     s = pygame.transform.scale(load_image('yup.jpg'), (200, 200))
-    screen.blit(s, (530, 250))
+    surf.blit(s, (530, 250))
     bu = pygame.transform.scale(load_image('boo.png'), (200, 200)) # картинка взрыва
-    screen.blit(bu, (x - 70, y - 50))
+    surf.blit(bu, (x - 70, y - 50))
 
 
 def restart(screen):
+    global speed_car
     #pygame.display.update()
     #speed_car = 12
-    ox_per = ox
+    #ox_per =  [i for i in range(WIDTH + 10, WIDTH + 5001, 150)]
+    speed_car = 12
     Main_game(screen)
 
 
@@ -73,26 +72,27 @@ class the_next_stat_is(pygame.sprite.Sprite):
 
 
 class Button:
-    def __init__(self, x, y, width, height, act_color, inact_color, text=''):
+    def __init__(self, x, y, width, height, act_color, inact_color, surf,  text=''):
         self.x, self.y = x, y
         self.width, self.height = width, height
         self.rect = pygame.Rect(x, y, width, height)
         self.act_color = act_color
         self.inact_color = inact_color
         self.text = text
+        self.surf = surf
 
     def draw(self, x, y):
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
         if y < mouse[1] < y + self.height and x < mouse[0] < x + self.width and click[0] == 1:
-            pygame.draw.rect(screen, (self.act_color), self.rect)
-            restart(screen)
+            pygame.draw.rect(self.surf, (self.act_color), self.rect)
+            restart(self.surf)
         else:
-            pygame.draw.rect(screen, (self.inact_color), self.rect)
+            pygame.draw.rect(self.surf, (self.inact_color), self.rect)
         font = pygame.font.Font(None, 35)
         text_surf = font.render(self.text, True, WHITE)
         text_rect = text_surf.get_rect(center=self.rect.center)
-        screen.blit(text_surf, text_rect)
+        self.surf.blit(text_surf, text_rect)
 
 
 class Bus(pygame.sprite.Sprite):
@@ -107,17 +107,15 @@ class Bus(pygame.sprite.Sprite):
         self.rect.y = HEIGHT // 2 + 15
         self.mask_bus = pygame.mask.from_surface(self.image)
 
-    def update(self, keys):
-        global speed_car
+    def update(self, keys, surf):
         # ниже контроль движения автобуса
         if keys[pygame.K_w] and self.rect.y + 14 >= 100 and speed_car != 0:
             self.rect.y -= 6
         if keys[pygame.K_s] and self.rect.y + 111 <= 745 and speed_car != 0:
             self.rect.y += 6
 
-
 class Cars(pygame.sprite.Sprite):
-    def __init__(self, all_sprites, name, ox_per):  # name = ('png', (x, y))
+    def __init__(self, all_sprites, name, ox_per, for_x):  # name = ('png', (x, y))
         super().__init__(all_sprites)
         self.ox_per = ox_per
         self.image = load_image(name[0])  # считываем назвнаие
@@ -125,37 +123,40 @@ class Cars(pygame.sprite.Sprite):
         self.rect.x = name[1][0]  # считаваем абциссу
         self.rect.y = name[1][1]  # считаваем ординату
         self.mask_car = pygame.mask.from_surface(self.image)
-        self.add(sprts_cars) # добавление текущей машинки в список спрайтов
-        for_x.append(self.rect.x) # добавление "использованной" координаты х для машинки
+        self.add(sprts_cars)
+        self.forx = for_x# добавление текущей машинки в список спрайтов
+        self.forx.append(self.rect.x) # добавление "использованной" координаты х для машинки
 
-    def update(self, speed):
-        global speed_car, ox_per
+    def update(self, speed, bus):
+        global speed_car
         cor_y = [90, 200, 310, 420, 530, 640]
         self.rect.x -= speed_car
         p = choice(self.ox_per)  # выбор абциссы старта машинки при достижении левой границы
         if pygame.sprite.collide_mask(self, bus): # если машинки сталкнулись
-            smena(self.rect.x, self.rect.y)
+            smena(self.rect.x, self.rect.y, bus, surf)
             speed_car = 0
         # далее проверяется то, когда машинки заезжают за стену
-        if self.rect.x + self.rect.width < 0 and p not in for_x:
+        if self.rect.x + self.rect.width < 0 and p not in self.forx:
             self.rect.x = (p)
             self.rect.y = choice(cor_y)
             if len(self.ox_per) == 1:
-                the_next_stat_is(all_sprites, self.ox_per)
+                the_next_stat_is(all_sprites)
             else:
-                for_x.append(self.rect.x), self.ox_per.remove(self.rect.x)
+                self.forx.append(self.rect.x), self.ox_per.remove(self.rect.x)
 
 
 def Main_game(surf):
-    global screen, bus, speed_car, ox_per
+    for_x = []
+    prov = True
+    ox = [i for i in range(WIDTH + 10, WIDTH + 5001, 150)]
+
+    sprts_cars = pygame.sprite.Group()  # группа спрайтов машинок
+    all_sprites = pygame.sprite.Group()
     pygame.init()
     screen = surf
     clock = pygame.time.Clock()
     start_ticks = pygame.time.get_ticks()
-
-    #all_sprites = pygame.sprite.Group()
     bus = Bus(all_sprites)
-
     cor_y = [90, 200, 310, 420, 530, 640] # список ординат для полос дороги
     x1, x2 = ox_operations(ox)[0], ox_operations(ox)[0]
     x3, x4 = ox_operations(ox)[0], ox_operations(ox)[0]
@@ -166,7 +167,7 @@ def Main_game(surf):
                  ('black_car.png', (x4, choice(cor_y))),
                  ('purp_car.png', (x5, choice(cor_y))),
                  ('white_car.png', (x6, choice(cor_y)))]:
-            Cars(all_sprites, name, ox)  # передаём в name имя файла и координаты запуска
+            Cars(all_sprites, name, ox, for_x)  # передаём в name имя файла и координаты запуска
 
     imgg = load_image('roof_g.png')
     imgv = load_image('roof_v.png')
@@ -176,7 +177,6 @@ def Main_game(surf):
 
     xx, yy = 0, 45 # координаты расположения изображения дороги
     X1, Y1 = 1280, 45
-    speed_car = 12
     roof_g_speed = 4
     roof_g_positions = [(490, -35), (80, -35), (225, -35)]
     roof_v_positions = [(1085, -68), (720, -68), (840, -68)]
@@ -212,7 +212,7 @@ def Main_game(surf):
 
 
         keys = pygame.key.get_pressed()
-        all_sprites.update(keys)
+        all_sprites.update(keys, bus)
         all_sprites.draw(screen)
 
         for event in pygame.event.get():
@@ -223,3 +223,6 @@ def Main_game(surf):
         clock.tick(60)  # Ограничить до 60 кадров в секунду
 
     pygame.display.update()
+
+surf = pygame.display.set_mode((1300, 750))
+Main_game(surf)
