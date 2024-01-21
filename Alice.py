@@ -175,6 +175,7 @@ def game_one(surf):
         mins = secs // 60
         secs %= 60
 
+
         # Обновляем текст один раз на каждый тик
         text = font.render('{}:{}'.format(mins, secs), True, WHITE, (100, 100, 100))
         textRect = text.get_rect(center=(1000, 280))
