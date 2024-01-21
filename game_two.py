@@ -2,41 +2,64 @@ import pygame
 import os
 import sys
 
-
-def main(surf):
-    from main_game import Main_game
-    Main_game(surf)
-
-
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 PINK = (255, 100, 100)
-k = 2
+k = 3
 
 
 class Button:
     def __init__(self, x, y, width, height, act_color, inact_color, surf, text=''):
         self.x, self.y = x, y
-        self.width = width
-        self.height = height
+        self.width, self.height = width, height
+        self.rect = pygame.Rect(x, y, width, height)
         self.act_color = act_color
         self.inact_color = inact_color
         self.text = text
         self.surf = surf
 
-    def draw(self, win, x, y):
+    def draw(self, x, y):
         global k
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
-        if y < mouse[1] < y + self.height and x < mouse[0] < x + self.width and click[0] == 1:
-            pygame.draw.rect(self.surf, (self.act_color), (x, y, self.width, self.height))
-            k -= 1
-            restart(self.surf)
-            return 1
+        if y < mouse[1] < y + self.height and x < mouse[0] < x + self.width:
+            pygame.draw.rect(self.surf, (self.act_color), self.rect)
+            if click[0] == 1:
+                k -= 1
+                if k == 0:
+                    main(self.surf)
+                else:
+                    restart(self.surf)
+                return 1
         else:
-            pygame.draw.rect(self.surf, (self.inact_color), (x, y, self.width, self.height))
+            pygame.draw.rect(self.surf, (self.inact_color), self.rect)
+        font = pygame.font.Font(None, 35)
+        text_surf = font.render(self.text, True, WHITE)
+        text_rect = text_surf.get_rect(center=self.rect.center)
+        self.surf.blit(text_surf, text_rect)
+
+
+    def draw2(self, x, y):
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+        if y < mouse[1] < y + self.height and x < mouse[0] < x + self.width and click[0] == 1:
+            pygame.draw.rect(self.surf, (self.act_color), self.rect)
+            if k == 0:
+                main(self.surf)
+                return 2
+        else:
+            pygame.draw.rect(self.surf, (self.inact_color), self.rect)
+        font = pygame.font.Font(None, 35)
+        text_surf = font.render(self.text, True, WHITE)
+        text_rect = text_surf.get_rect(center=self.rect.center)
+        self.surf.blit(text_surf, text_rect)
+
+
+def main(surf):
+    from main_game import Main_game
+    Main_game(surf)
 
 
 def load_image(name, colorkey=None):
@@ -50,7 +73,7 @@ def load_image(name, colorkey=None):
 
 def check_and_append(event_pos, checkpoints, check):
     for x, y in checkpoints:
-        if abs(x - event_pos[0]) <= 30 and abs(y - event_pos[1]) <= 30:
+        if abs(x - event_pos[0]) <= 15 and abs(y - event_pos[1]) <= 15:
             check.add((x, y))
             break
 
@@ -65,31 +88,32 @@ def game_two(surf):
 
     running = True
     size = (1300, 750)
-    image = load_image("itog.png")
+    image = load_image('itog.png')
     screen = surf
     drawing_surface = pygame.Surface(image.get_size(), pygame.SRCALPHA)
 
     clock = pygame.time.Clock()
     start_ticks = pygame.time.get_ticks()  # стартовое время в миллисекундах
     # Создаем кнопки один раз вне цикла
-    button_done = Button(300, 600, 260, 50, RED, PINK, surf, 'done')
+    button_done = Button(830, 600, 260, 50, RED, PINK, surf, 'ещё раз')
+    button_doneliv = Button(830, 600, 260, 50, RED, PINK, surf, 'вернуться')
+    button_contin = Button(830, 600, 260, 50, RED, PINK, surf, 'едем дальше')
     # Определите шрифт один раз вне цикла
     font = pygame.font.Font('freesansbold.ttf', 64)
 
     checkpoints = [(320, 87), (221, 262), (68, 432), (441, 423), (68, 267), (263, 185), (458, 103), (197, 421),
                    (35, 317),
                    (497, 375), (420, 495)]
-    s = []
+    s, check = [], set()
     heart_xs = ['hert3.png', 'hert2.png', 'hert.png']
-    check = set()
-    heart_img = load_image(heart_xs[k])
-
-    time_stop = 20
+    heart_img = load_image(heart_xs[k-1])
+    time_stop = 3
     time_of_end = 0
     freeze_timer = False  # Flag to control frozen timer
 
     while running:
         screen.fill((100, 150, 50))
+        screen.blit(heart_img, (1165, 5))
         millis = pygame.time.get_ticks() - start_ticks
         secs = millis // 1000
         if secs >= time_stop + 1:
@@ -98,33 +122,32 @@ def game_two(surf):
             if not freeze_timer:  # Freeze the timer only once
                 freeze_timer = True
                 time_of_end = secs
-
             secs = time_of_end
 
-        screen.blit(heart_img, (1000,100))
         mins = secs // 60
         secs %= 60
 
-        # text = font.render('{}:{}'.format(mins, secs), True, WHITE, BLACK)
-        # textRect = text.get_rect(center=(1000, 400))
-
         if millis // 1000 >= time_stop:
-            if len(s) != 11 and k > 0:
-                tab = pygame.font.SysFont('arial', 26)
-                sc_text = tab.render('Не получилось :( Попробуете выполнить задание заново?', True, WHITE, BLUE)
-                cor = sc_text.get_rect(center=(900, 250))
-                screen.blit(sc_text, cor)
-                button_done.draw(screen, 500, 600)
-            if k == 0:
-                print('Главное меню')
+            if len(s) != 11:
+                if k == 0:
+                    tab = pygame.font.SysFont('arial', 26)
+                    sc_text = tab.render('Вы потратили все жизни и проиграли.. Начните заново !', True, WHITE, BLUE)
+                    screen.blit(sc_text, (640, 320))
+                    button_doneliv.draw(830, 600)
+                else:
+                    tab = pygame.font.SysFont('arial', 26)
+                    sc_text = tab.render('Не получилось :( Попробуете выполнить задание заново?', True, WHITE, BLUE)
+                    screen.blit(sc_text, (640, 320))
+                    button_done.draw(830, 600)
 
         if len(s) == 11 and freeze_timer:
             time_of_end = secs
             freeze_timer = True
             tab = pygame.font.SysFont('arial', 26)
-            sc_text = tab.render('Всё GOOD', True, WHITE, BLUE)
-            cor = sc_text.get_rect(center=(900, 250))
-            screen.blit(sc_text, cor)
+            sc_text = tab.render('Вам удалось закрасить все необходимые места!', True, WHITE, BLUE)
+            screen.blit(sc_text, (640, 320))
+            if button_contin.draw2(830, 600) == 2:
+                pygame.display.update()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -143,7 +166,7 @@ def game_two(surf):
 
         # Render the new timer text
         text = font.render('{}:{}'.format(mins, secs), True, WHITE)
-        textRect = text.get_rect(center=(1000, 400))
+        textRect = text.get_rect(center=(900, 250))
 
         screen.blit(text, textRect)
         screen.blit(image, (0, 0))
@@ -153,3 +176,6 @@ def game_two(surf):
         clock.tick(60)  # Ограничить до 60 кадров в секунду
 
     pygame.quit()
+
+screen = pygame.display.set_mode((1300, 750))
+game_two(screen)
