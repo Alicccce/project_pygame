@@ -107,7 +107,7 @@ def game_two(surf):
     s, check = [], set()
     heart_xs = ['hert3.png', 'hert2.png', 'hert.png']
     heart_img = load_image(heart_xs[k-1])
-    time_stop = 3
+    time_stop = 20
     time_of_end = 0
     freeze_timer = False  # Flag to control frozen timer
 
