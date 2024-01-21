@@ -3,8 +3,6 @@ import os
 import sys
 from random import *
 
-
-
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -15,9 +13,11 @@ LIGHT_GREEN = (100, 200, 100)
 HEIGHT, WIDTH = 750, 1300
 speed_car = 12
 
-sprts_cars = pygame.sprite.Group() # группа спрайтов машинок
+sprts_cars = pygame.sprite.Group()  # группа спрайтов машинок
 all_sprites = pygame.sprite.Group()
-#sound = pygame.mixer.Sound('avaria2.wav')
+
+
+# sound = pygame.mixer.Sound('avaria2.wav')
 
 
 def load_image(name, colorkey=None):
@@ -30,22 +30,22 @@ def load_image(name, colorkey=None):
     return image
 
 
-def ox_operations(s): # функция генерации абциссы на старте у машинки
+def ox_operations(s):  # функция генерации абциссы на старте у машинки
     if s != []:
         x = choice(s)
         s.remove(x)
         return x, s
 
 
-def smena(x, y, surf): # функция вывода "окончания" основной игры
-    buyt = Button(500, 600, 260, 50, GREEN, LIGHT_GREEN, surf,'играть')
+def smena(x, y, surf):  # функция вывода "окончания" основной игры
+    buyt = Button(500, 600, 260, 50, GREEN, LIGHT_GREEN, surf, 'играть')
     buyt.draw(500, 600)
     tab = pygame.font.SysFont('arial', 26)
     sc_text = tab.render('Авария! Вы проиграли. Попробуете снова?', True, BLACK, (90, 200, 70))
     surf.blit(sc_text, (430, 500))
     s = pygame.transform.scale(load_image('yup.jpg'), (200, 200))
     surf.blit(s, (530, 250))
-    bu = pygame.transform.scale(load_image('boo.png'), (200, 200)) # картинка взрыва
+    bu = pygame.transform.scale(load_image('boo.png'), (200, 200))  # картинка взрыва
     surf.blit(bu, (x - 70, y - 50))
 
 
@@ -75,7 +75,7 @@ class the_next_stat_is(pygame.sprite.Sprite):
 
 
 class Button:
-    def __init__(self, x, y, width, height, act_color, inact_color, surf,  text=''):
+    def __init__(self, x, y, width, height, act_color, inact_color, surf, text=''):
         self.x, self.y = x, y
         self.width, self.height = width, height
         self.rect = pygame.Rect(x, y, width, height)
@@ -118,6 +118,7 @@ class Bus(pygame.sprite.Sprite):
         if keys[pygame.K_s] and self.rect.y + 111 <= 745 and speed_car != 0:
             self.rect.y += 6
 
+
 class Cars(pygame.sprite.Sprite):
     def __init__(self, all_sprites, name, ox_per, for_x):  # name = ('png', (x, y))
         super().__init__(all_sprites)
@@ -127,16 +128,16 @@ class Cars(pygame.sprite.Sprite):
         self.rect.x = name[1][0]  # считаваем абциссу
         self.rect.y = name[1][1]  # считаваем ординату
         self.mask_car = pygame.mask.from_surface(self.image)
-        self.add(sprts_cars) # добавление текущей машинки в список спрайтов
+        self.add(sprts_cars)  # добавление текущей машинки в список спрайтов
         self.forx = for_x
-        self.forx.append(self.rect.x) # добавление "использованной" координаты х для машинки
+        self.forx.append(self.rect.x)  # добавление "использованной" координаты х для машинки
 
     def update(self, speed, bus):
         global speed_car
         cor_y = [90, 200, 310, 420, 530, 640]
         self.rect.x -= speed_car
         p = choice(self.ox_per)  # выбор абциссы старта машинки при достижении левой границы
-        if pygame.sprite.collide_mask(self, bus): # если машинки сталкнулись
+        if pygame.sprite.collide_mask(self, bus):  # если машинки сталкнулись
             smena(self.rect.x, self.rect.y, screen)
             speed_car = 0
         # далее проверяется то, когда машинки заезжают за стену
@@ -154,8 +155,8 @@ def Main_game(surf):
     global screen
     pygame.display.flip()
 
-    for_x = [] # список "занятых" абцисс машинок
-    ox = [i for i in range(WIDTH + 10, WIDTH + 5001, 150)] # ось ох (координата машинки),
+    for_x = []  # список "занятых" абцисс машинок
+    ox = [i for i in range(WIDTH + 10, WIDTH + 5001, 150)]  # ось ох (координата машинки),
     # которая генерирется и появляется на n_ом расстоянии от осн. экрана
 
     sprts_cars = pygame.sprite.Group()  # группа спрайтов машинок
@@ -167,7 +168,7 @@ def Main_game(surf):
     start_ticks = pygame.time.get_ticks()
     bus = Bus(all_sprites)
 
-    cor_y = [90, 200, 310, 420, 530, 640] # список ординат для полос дороги
+    cor_y = [90, 200, 310, 420, 530, 640]  # список ординат для полос дороги
     x1, x2 = ox_operations(ox)[0], ox_operations(ox)[0]
     x3, x4 = ox_operations(ox)[0], ox_operations(ox)[0]
     x5, x6 = ox_operations(ox)[0], ox_operations(ox)[0]
@@ -177,7 +178,7 @@ def Main_game(surf):
                  ('black_car.png', (x4, choice(cor_y))),
                  ('purp_car.png', (x5, choice(cor_y))),
                  ('white_car.png', (x6, choice(cor_y)))]:
-            Cars(all_sprites, name, ox, for_x)  # передаём в name имя файла и координаты запуска
+        Cars(all_sprites, name, ox, for_x)  # передаём в name имя файла и координаты запуска
 
     imgg = load_image('roof_g.png')
     imgv = load_image('roof_v.png')
@@ -185,7 +186,7 @@ def Main_game(surf):
 
     running = True
 
-    xx, yy = 0, 45 # координаты расположения изображения дороги
+    xx, yy = 0, 45  # координаты расположения изображения дороги
     X1, Y1 = 1280, 45
     roof_g_speed = 4
     roof_g_positions = [(490, -35), (80, -35), (225, -35)]
@@ -220,7 +221,6 @@ def Main_game(surf):
         # Делаем то же для "roof_v"
         roof_v_positions = [((WIDTH, y) if x < - imgv.get_width() - 100 else (x, y)) for x, y in roof_v_positions]
 
-
         keys = pygame.key.get_pressed()
         all_sprites.update(keys, bus)
         all_sprites.draw(screen)
@@ -234,3 +234,7 @@ def Main_game(surf):
         clock.tick(60)  # Ограничить до 60 кадров в секунду
 
     pygame.display.update()
+
+
+screen = pygame.display.set_mode((1300, 750))
+Main_game(screen)
