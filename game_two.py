@@ -2,6 +2,7 @@ import pygame
 import os
 import sys
 
+
 def main(surf):
     from main_game import Main_game
     Main_game(surf)
@@ -36,7 +37,6 @@ class Button:
             return 1
         else:
             pygame.draw.rect(self.surf, (self.inact_color), (x, y, self.width, self.height))
-
 
 
 def load_image(name, colorkey=None):
@@ -80,7 +80,9 @@ def game_two(surf):
                    (35, 317),
                    (497, 375), (420, 495)]
     s = []
+    heart_xs = ['hert3.png', 'hert2.png', 'hert.png']
     check = set()
+    heart_img = load_image(heart_xs[k])
 
     time_stop = 20
     time_of_end = 0
@@ -99,6 +101,7 @@ def game_two(surf):
 
             secs = time_of_end
 
+        screen.blit(heart_img, (1000,100))
         mins = secs // 60
         secs %= 60
 
