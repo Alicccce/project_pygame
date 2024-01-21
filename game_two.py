@@ -12,7 +12,7 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 PINK = (255, 100, 100)
-k = 0
+k = 3
 
 
 class Button:
@@ -31,11 +31,12 @@ class Button:
         click = pygame.mouse.get_pressed()
         if y < mouse[1] < y + self.height and x < mouse[0] < x + self.width and click[0] == 1:
             pygame.draw.rect(self.surf, (self.act_color), (x, y, self.width, self.height))
+            k -= 1
             restart(self.surf)
-            k += 1
-
+            return 1
         else:
             pygame.draw.rect(self.surf, (self.inact_color), (x, y, self.width, self.height))
+
 
 
 def load_image(name, colorkey=None):
@@ -81,7 +82,7 @@ def game_two(surf):
     s = []
     check = set()
 
-    time_stop = 20
+    time_stop = 3
     time_of_end = 0
     freeze_timer = False  # Flag to control frozen timer
 
@@ -105,16 +106,14 @@ def game_two(surf):
         # textRect = text.get_rect(center=(1000, 400))
 
         if millis // 1000 >= time_stop:
-            if len(s) != 11:
+            if len(s) != 11 and k > 0:
                 tab = pygame.font.SysFont('arial', 26)
                 sc_text = tab.render('Не получилось :( Попробуете выполнить задание заново?', True, WHITE, BLUE)
                 cor = sc_text.get_rect(center=(900, 250))
                 screen.blit(sc_text, cor)
-                print(k)
-                if button_done.draw(screen, 500, 600) == 1:
-                    pygame.display.update()
-                else:
-                    main(surf)
+                button_done.draw(screen, 500, 600)
+            if k == 0:
+                print('Главное меню')
 
         if len(s) == 11 and freeze_timer:
             time_of_end = secs
