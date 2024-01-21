@@ -1,6 +1,6 @@
 import pygame
 import os
-from Alice import game_one
+from main_game import
 
 
 WHITE = (255, 255, 255)
@@ -33,6 +33,7 @@ class Button(pygame.sprite.Sprite):
 
         if self.rect.collidepoint(mouse_x, mouse_y) and click[0]:
             game_one(surf)
+            pygame.quit()
 
 def load(surf):
     pygame.init()
@@ -58,6 +59,8 @@ def load(surf):
         all_sprites.add(sprite)
         sprite.rect.x = x
         sprite.rect.y = y
+
+
 
     for x, y in roof_v_positions:
         sprite = pygame.sprite.Sprite()
