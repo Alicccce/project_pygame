@@ -2,6 +2,7 @@ import pygame
 import os
 import sys
 from random import *
+from load_img import load
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -18,6 +19,8 @@ all_sprites = pygame.sprite.Group()
 
 
 # sound = pygame.mixer.Sound('avaria2.wav')
+
+
 
 
 def load_image(name, colorkey=None):
@@ -144,8 +147,10 @@ class Cars(pygame.sprite.Sprite):
         if self.rect.x + self.rect.width < 0 and p not in self.forx:
             self.rect.x = (p)
             self.rect.y = choice(cor_y)
-            if len(self.ox_per) == 1:
+            if len(self.ox_per) > 1:
+                load(screen)
                 the_next_stat_is(all_sprites, screen)
+                pygame.quit()
             else:
                 self.forx.append(self.rect.x)
                 self.ox_per.remove(self.rect.x)
@@ -153,9 +158,11 @@ class Cars(pygame.sprite.Sprite):
 
 def Main_game(surf):
     global screen
+    print(4)
     pygame.display.flip()
 
     for_x = []  # список "занятых" абцисс машинок
+    ox = 0
     ox = [i for i in range(WIDTH + 10, WIDTH + 5001, 150)]  # ось ох (координата машинки),
     # которая генерирется и появляется на n_ом расстоянии от осн. экрана
 
@@ -234,7 +241,3 @@ def Main_game(surf):
         clock.tick(60)  # Ограничить до 60 кадров в секунду
 
     pygame.display.update()
-
-
-screen = pygame.display.set_mode((1300, 750))
-Main_game(screen)

@@ -1,6 +1,6 @@
 import pygame
 import os
-from main_game import
+from main_game import Main_game
 
 
 WHITE = (255, 255, 255)
@@ -32,10 +32,12 @@ class Button(pygame.sprite.Sprite):
         click = pygame.mouse.get_pressed()
 
         if self.rect.collidepoint(mouse_x, mouse_y) and click[0]:
-            game_one(surf)
+            Main_game(surf)
             pygame.quit()
+            print(2)
 
-def load(surf):
+
+def start(surf):
     pygame.init()
     pygame.font.init()
     running = True
@@ -72,7 +74,7 @@ def load(surf):
 
     while running:
         surf.fill((150, 190, 100))
-        screen.blit(imgtr, (xx, yy))
+        surf.blit(imgtr, (xx, yy))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -86,5 +88,3 @@ def load(surf):
 
     pygame.quit()
 
-screen = pygame.display.set_mode((1300, 750))
-load(screen)

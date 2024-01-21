@@ -1,6 +1,6 @@
 import pygame
-from Start_display import load
+from Start_display import start
 
 
 screen = pygame.display.set_mode((1300, 750))
-load(screen)
+start(screen)

@@ -2,11 +2,17 @@ import pygame
 import os
 import sys
 
+def main(surf):
+    from main_game import Main_game
+    Main_game(surf)
+
+
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 PINK = (255, 100, 100)
+k = 0
 
 
 class Button:
@@ -20,12 +26,14 @@ class Button:
         self.surf = surf
 
     def draw(self, win, x, y):
+        global k
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
         if y < mouse[1] < y + self.height and x < mouse[0] < x + self.width and click[0] == 1:
             pygame.draw.rect(self.surf, (self.act_color), (x, y, self.width, self.height))
             restart(self.surf)
-            return 1
+            k += 1
+
         else:
             pygame.draw.rect(self.surf, (self.inact_color), (x, y, self.width, self.height))
 
@@ -51,6 +59,7 @@ def restart(surf):
 
 
 def game_two(surf):
+    global k
     pygame.init()
 
     running = True
@@ -101,8 +110,11 @@ def game_two(surf):
                 sc_text = tab.render('Не получилось :( Попробуете выполнить задание заново?', True, WHITE, BLUE)
                 cor = sc_text.get_rect(center=(900, 250))
                 screen.blit(sc_text, cor)
+                print(k)
                 if button_done.draw(screen, 500, 600) == 1:
                     pygame.display.update()
+                else:
+                    main(surf)
 
         if len(s) == 11 and freeze_timer:
             time_of_end = secs

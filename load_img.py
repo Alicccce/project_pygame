@@ -1,5 +1,12 @@
+import random
 import pygame
 import os
+from Alice import game_one
+
+
+def two(surf):
+    from game_two import game_two
+    game_two(surf)
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -20,6 +27,9 @@ def load(surf):
     running = True
     size = (1300, 750)
     clock = pygame.time.Clock()
+
+    start_ticks = pygame.time.get_ticks()
+
     img_bus_load = load_image('bus_mini.png')
     angle = 0
     FONT = pygame.font.SysFont("Roboto", 80)
@@ -34,6 +44,19 @@ def load(surf):
         if angle >= 360:
             angle = 0
 
+        millis = pygame.time.get_ticks() - start_ticks
+        secs = millis // 1000
+        if secs >= 16:
+            secs = 15
+        mins = secs // 60
+        secs %= 60
+
+        if secs == 4:
+            print(3)
+            two(surf)
+
+
+
         surf.blit(rotated_img,
                   (size[0] // 2 - rotated_img.get_width() // 2, size[1] // 2 - rotated_img.get_height() // 2 + 20))
 
@@ -41,11 +64,11 @@ def load(surf):
             if event.type == pygame.QUIT:
                 running = False
 
+
+
         pygame.display.flip()
         clock.tick(30)
 
     pygame.quit()
 
 
-screen = pygame.display.set_mode((1300, 750))
-load(screen)
