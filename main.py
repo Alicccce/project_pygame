@@ -1,4 +1,5 @@
 import pygame
+from Alice import game_one
 from Start_display import start
 
 

@@ -52,7 +52,6 @@ def load(surf):
         secs %= 60
 
         if secs == 4:
-            print(3)
             two(surf)
 
 

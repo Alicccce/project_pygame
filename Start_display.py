@@ -34,7 +34,7 @@ class Button(pygame.sprite.Sprite):
         if self.rect.collidepoint(mouse_x, mouse_y) and click[0]:
             Main_game(surf)
             pygame.quit()
-            print(2)
+
 
 
 def start(surf):

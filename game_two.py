@@ -12,7 +12,7 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 PINK = (255, 100, 100)
-k = 3
+k = 2
 
 
 class Button:
@@ -82,7 +82,7 @@ def game_two(surf):
     s = []
     check = set()
 
-    time_stop = 3
+    time_stop = 20
     time_of_end = 0
     freeze_timer = False  # Flag to control frozen timer
 
