@@ -4,6 +4,7 @@ import sys
 from random import *
 from load_img import load
 
+
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -13,6 +14,9 @@ PINK = (255, 100, 100)
 LIGHT_GREEN = (100, 200, 100)
 HEIGHT, WIDTH = 750, 1300
 speed_car = 12
+
+pygame.mixer.init()
+sound_boom = pygame.mixer.Sound("sounds/avaria2.ogg")
 
 sprts_cars = pygame.sprite.Group()  # группа спрайтов машинок
 all_sprites = pygame.sprite.Group()
@@ -69,7 +73,6 @@ class the_next_stat_is(pygame.sprite.Sprite):
         the_next_stat_is.update(self, self.image)
 
     def update(self, mage):
-        print('good')
         if self.rect.x > WIDTH // 2:
             self.rect.x -= 10
         else:
@@ -134,13 +137,17 @@ class Cars(pygame.sprite.Sprite):
         self.add(sprts_cars)  # добавление текущей машинки в список спрайтов
         self.forx = for_x
         self.forx.append(self.rect.x)  # добавление "использованной" координаты х для машинки
-
+        self.boom = 0
     def update(self, speed, bus):
-        global speed_car
+        global speed_car, sound_boom
         cor_y = [90, 200, 310, 420, 530, 640]
         self.rect.x -= speed_car
         p = choice(self.ox_per)  # выбор абциссы старта машинки при достижении левой границы
-        if pygame.sprite.collide_mask(self, bus):  # если машинки сталкнулись
+        if pygame.sprite.collide_mask(self, bus):
+            # если машинки сталкнулись
+            if self.boom == 0:
+                sound_boom.play()
+                self.boom += 1
             smena(self.rect.x, self.rect.y, screen)
             speed_car = 0
         # далее проверяется то, когда машинки заезжают за стену
@@ -158,8 +165,8 @@ class Cars(pygame.sprite.Sprite):
 
 def Main_game(surf):
     global screen
-    print(4)
     pygame.display.flip()
+
 
     for_x = []  # список "занятых" абцисс машинок
     ox = 0
