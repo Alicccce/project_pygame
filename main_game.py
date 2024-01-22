@@ -1,11 +1,10 @@
+import random
+
 import pygame
 import os
 import sys
 from random import *
 from load_img import load
-
-
-
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -15,19 +14,15 @@ GREEN = (0, 255, 0)
 PINK = (255, 100, 100)
 LIGHT_GREEN = (100, 200, 100)
 HEIGHT, WIDTH = 750, 1300
+col_stat = choice([4, 9, 7, 4, 11, 16])
 speed_car = 12
 
 pygame.mixer.init()
 sound_boom = pygame.mixer.Sound("sounds/avaria2.ogg")
-sound_button = pygame.mixer.Sound("sounds/klik_no_button.mp3")
+sound_button = pygame.mixer.Sound("sounds/molti_button.mp3")
 
 sprts_cars = pygame.sprite.Group()  # группа спрайтов машинок
 all_sprites = pygame.sprite.Group()
-
-
-# sound = pygame.mixer.Sound('avaria2.wav')
-
-
 
 
 def load_image(name, colorkey=None):
@@ -65,22 +60,9 @@ def restart(surf):
     Main_game(surf)
 
 
-class the_next_stat_is(pygame.sprite.Sprite):
-    image = load_image('stat.png')
-
-    def __init__(self, all_sprites, screen):
-        super().__init__(all_sprites)
-        self.image = the_next_stat_is.image
-        self.rect = self.image.get_rect()
-        self.rect.x, self.rect.y = 1310, 640
-        the_next_stat_is.update(self, self.image)
-
-    def update(self, mage):
-        if self.rect.x > WIDTH // 2:
-            self.rect.x -= 10
-        else:
-            self.rect.x = 1310
-        screen.blit(mage, (self.rect.x, self.rect.y))
+def over(surf):
+    from End_display import end
+    end(surf)
 
 
 class Button:
@@ -123,16 +105,16 @@ class Bus(pygame.sprite.Sprite):
 
     def update(self, keys, surf):
         # ниже контроль движения автобуса
-        if keys[pygame.K_w] and self.rect.y + 14 >= 100 and speed_car != 0:
+        if keys[pygame.K_w] and self.rect.y + 14 >= 85 and speed_car != 0:
             self.rect.y -= 6
-        if keys[pygame.K_s] and self.rect.y + 111 <= 745 and speed_car != 0:
+        if keys[pygame.K_s] and self.rect.y + 111 <= 728 and speed_car != 0:
             self.rect.y += 6
 
 
 class Cars(pygame.sprite.Sprite):
-    def __init__(self, all_sprites, name, ox_per, for_x):  # name = ('png', (x, y))
+    def __init__(self, all_sprites, name, ox_per, for_x, l):  # name = ('png', (x, y))
         super().__init__(all_sprites)
-        self.ox_per = ox_per
+        self.ox_per, self.l = ox_per, l
         self.image = load_image(name[0])  # считываем назвнаие
         self.rect = self.image.get_rect()
         self.rect.x = name[1][0]  # считаваем абциссу
@@ -140,15 +122,15 @@ class Cars(pygame.sprite.Sprite):
         self.mask_car = pygame.mask.from_surface(self.image)
         self.add(sprts_cars)  # добавление текущей машинки в список спрайтов
         self.forx = for_x
-        self.forx.append(self.rect.x)  # добавление "использованной" координаты х для машинки
+        self.forx.append(self.rect.x)# добавление "использованной" координаты х для машинки
         self.boom = 0
+
     def update(self, speed, bus):
-        global speed_car, sound_boom
+        global speed_car, col_stat
         cor_y = [90, 200, 310, 420, 530, 640]
         self.rect.x -= speed_car
         p = choice(self.ox_per)  # выбор абциссы старта машинки при достижении левой границы
-        if pygame.sprite.collide_mask(self, bus):
-            # если машинки сталкнулись
+        if pygame.sprite.collide_mask(self, bus):  # если машинки сталкнулись
             if self.boom == 0:
                 sound_boom.play()
                 self.boom += 1
@@ -158,17 +140,19 @@ class Cars(pygame.sprite.Sprite):
         if self.rect.x + self.rect.width < 0 and p not in self.forx:
             self.rect.x = (p)
             self.rect.y = choice(cor_y)
-            if len(self.ox_per) > 1:
+            if len(self.ox_per) == self.l:
+                if col_stat >= 1:
+                    col_stat -= 1
+                else:
+                    over(screen)
                 load(screen)
-                the_next_stat_is(all_sprites, screen)
                 pygame.quit()
-            else:
-                self.forx.append(self.rect.x)
-                self.ox_per.remove(self.rect.x)
+            self.forx.append(self.rect.x)
+            self.ox_per.remove(self.rect.x)
 
 
 def Main_game(surf):
-    global screen
+    global screen, speed_car
     pygame.display.flip()
 
 
@@ -185,6 +169,7 @@ def Main_game(surf):
     clock = pygame.time.Clock()
     start_ticks = pygame.time.get_ticks()
     bus = Bus(all_sprites)
+    l = choice([3, 14, 30, 21, 9])
 
     cor_y = [90, 200, 310, 420, 530, 640]  # список ординат для полос дороги
     x1, x2 = ox_operations(ox)[0], ox_operations(ox)[0]
@@ -196,7 +181,7 @@ def Main_game(surf):
                  ('black_car.png', (x4, choice(cor_y))),
                  ('purp_car.png', (x5, choice(cor_y))),
                  ('white_car.png', (x6, choice(cor_y)))]:
-        Cars(all_sprites, name, ox, for_x)  # передаём в name имя файла и координаты запуска
+        Cars(all_sprites, name, ox, for_x, l)  # передаём в name имя файла и координаты запуска
 
     imgg = load_image('roof_g.png')
     imgv = load_image('roof_v.png')

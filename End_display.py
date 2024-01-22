@@ -7,13 +7,10 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
-PINK = (255, 100, 100)
+GREEN = (0, 255, 0)
 HEIGHT, WIDTH = 750, 1300
 pygame.mixer.init()
-sound_button = pygame.mixer.Sound("sounds/button_start.mp3")
-# sound_button = pygame.mixer.Sound("sounds/molti_button.mp3")
-# sound_button = pygame.mixer.Sound("sounds/qwuq.mp3")
-
+sound_button = pygame.mixer.Sound("sounds/molti_button.mp3")
 
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
@@ -21,15 +18,14 @@ def load_image(name, colorkey=None):
     return image
 
 class Button(pygame.sprite.Sprite):
-    image = load_image("start1.png")
+    image = load_image('game_over.png')
 
     def __init__(self, *group):
         super().__init__(*group)
         self.image = Button.image
         self.rect = self.image.get_rect()
-        self.rect.x = 500
+        self.rect.x = 400
         self.rect.y = 340
-        self.mask_bus = pygame.mask.from_surface(self.image)
 
     def update(self, keys, surf):
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -41,16 +37,16 @@ class Button(pygame.sprite.Sprite):
             pygame.quit()
 
 
-
-def start(surf):
+def end(surf):
     pygame.init()
     pygame.font.init()
     running = True
     all_sprites = pygame.sprite.Group()
     clock = pygame.time.Clock()
 
-    FONT = pygame.font.SysFont("Roboto", 130)
-    finished = FONT.render('Смурфики', True, WHITE)
+    FONT = pygame.font.SysFont("Roboto", 65)
+    finished = FONT.render('Вы проехали все остановки и не попались!', True, BLACK)
+    again = FONT.render('Нажмите на кнопку, если хотите сыграть ещё раз', True, BLACK)
     Button(all_sprites)
     imgtr = load_image('trop.png')
     imgg = load_image('roof_g.png')
@@ -59,7 +55,6 @@ def start(surf):
     roof_v_positions = [(1085, -68), (720, -68), (840, -68)]
     xx, yy = 0, 45
 
-    # создание крыш ниже
     for x, y in roof_g_positions:
         sprite = pygame.sprite.Sprite()
         sprite.image = imgg
@@ -67,6 +62,9 @@ def start(surf):
         all_sprites.add(sprite)
         sprite.rect.x = x
         sprite.rect.y = y
+
+
+
     for x, y in roof_v_positions:
         sprite = pygame.sprite.Sprite()
         sprite.image = imgv
@@ -74,11 +72,16 @@ def start(surf):
         all_sprites.add(sprite)
         sprite.rect.x = x
         sprite.rect.y = y
+    sound = 0
 
     while running:
+        if sound == 0:
+            sound_button.play()
+            sound += 1
         surf.fill((150, 190, 100))
         surf.blit(imgtr, (xx, yy))
-        surf.blit(finished, (405, 185))
+        surf.blit(finished, (150, 215))
+        surf.blit(again, (120, 545))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -91,5 +94,6 @@ def start(surf):
         clock.tick(30)
 
     pygame.quit()
+
 
 

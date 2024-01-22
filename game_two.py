@@ -13,7 +13,8 @@ PINK = (255, 100, 100)
 k = 3
 
 pygame.mixer.init()
-sound_button = pygame.mixer.Sound("sounds/klik_no_button.mp3")
+sound_button = pygame.mixer.Sound("sounds/molti_button.mp3")
+sound_end= pygame.mixer.Sound("sounds/game_over_sound.mp3")
 
 
 class Button:
@@ -154,7 +155,7 @@ def game_two(surf):
             time_of_end = secs
             freeze_timer = True
             tab = pygame.font.SysFont('arial', 26)
-            sc_text = tab.render('Вам удалось закрасить все необходимые места!', True, WHITE, BLUE)
+            sc_text = tab.render('Вам удалось закрасить все необходимые места!', True, BLUE, WHITE)
             screen.blit(sc_text, (640, 320))
             if button_contin.draw2(830, 600) == 2:
                 pygame.display.update()
@@ -187,3 +188,6 @@ def game_two(surf):
 
     pygame.quit()
 
+
+screen = pygame.display.set_mode((1300, 750))
+game_two(screen)

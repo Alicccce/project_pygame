@@ -31,11 +31,10 @@ LEVEL = {
         [0, 0, 1, 0, 0, 1],
         [1, 0, 1, 0, 1],
         [0, 0, 1, 0, 0, 1, 0, 0, 1]
-
     ]
 }  # 0 - места, которые нужно занять, 1 - разделения
 pygame.mixer.init()
-sound_button = pygame.mixer.Sound("sounds/klik_no_button.mp3")
+sound_button = pygame.mixer.Sound("sounds/molti_button.mp3")
 
 
 class Board:
@@ -157,7 +156,7 @@ def game_one(surf):
     pygame.init()
     running = True
     time_of_end = False
-    a = random.choice(['Level 1', 'Level 2'])
+    a = random.choice(['Level 1', 'Level 2', 'Level 3'])
     board = Board(100, a, surf)
     board.set_view(10, 10, 100)
     clock = pygame.time.Clock()
