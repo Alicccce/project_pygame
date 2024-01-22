@@ -1,6 +1,9 @@
 import pygame
 import os
 import sys
+def game(surf):
+    from Start_display import start
+    start(surf)
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -8,6 +11,7 @@ RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 PINK = (255, 100, 100)
 k = 3
+
 
 
 class Button:
@@ -20,19 +24,20 @@ class Button:
         self.text = text
         self.surf = surf
 
-    def draw(self, x, y):
+    def draw(self, x, y, perem):
         global k
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
-        if y < mouse[1] < y + self.height and x < mouse[0] < x + self.width:
+        if y < mouse[1] < y + self.height and x < mouse[0] < x + self.width and perem == 1:
             pygame.draw.rect(self.surf, (self.act_color), self.rect)
             if click[0] == 1:
                 k -= 1
                 if k == 0:
-                    main(self.surf)
+                    game(self.surf)
                 else:
                     restart(self.surf)
                 return 1
+
         else:
             pygame.draw.rect(self.surf, (self.inact_color), self.rect)
         font = pygame.font.Font(None, 35)
@@ -44,9 +49,9 @@ class Button:
     def draw2(self, x, y):
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
-        if y < mouse[1] < y + self.height and x < mouse[0] < x + self.width and click[0] == 1:
+        if y < mouse[1] < y + self.height and x < mouse[0] < x + self.width:
             pygame.draw.rect(self.surf, (self.act_color), self.rect)
-            if k == 0:
+            if click[0] == 1:
                 main(self.surf)
                 return 2
         else:
@@ -133,12 +138,12 @@ def game_two(surf):
                     tab = pygame.font.SysFont('arial', 26)
                     sc_text = tab.render('Вы потратили все жизни и проиграли.. Начните заново !', True, WHITE, BLUE)
                     screen.blit(sc_text, (640, 320))
-                    button_doneliv.draw(830, 600)
+                    button_doneliv.draw(830, 600, 1)
                 else:
                     tab = pygame.font.SysFont('arial', 26)
                     sc_text = tab.render('Не получилось :( Попробуете выполнить задание заново?', True, WHITE, BLUE)
                     screen.blit(sc_text, (640, 320))
-                    button_done.draw(830, 600)
+                    button_done.draw(830, 600, 1)
 
         if len(s) == 11 and freeze_timer:
             time_of_end = secs
