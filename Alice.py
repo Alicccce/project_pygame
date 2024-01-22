@@ -10,11 +10,12 @@ PINK = (255, 100, 100)
 LEVEL = {
     'Level 1': [
         [0, 1, 0, 1, 0, 1, 0, 1, 0],
+        [0, 1, 0, 1, 0],
         [0, 1, 0],
-        [0, 1, 0],
+        [0, 1, 0, 1, 0],
         [0, 1, 0, 1, 0, 1, 0, 1, 0]
     ]
-}
+} # 0 - места, которые нужно занять, 1 - разделения
 
 
 class Board:
@@ -76,7 +77,6 @@ class Board:
 
             # Переходим к следующей строке, учитывая промежуток между строками
             top_y += row_height + self.row_spacing
-
         return None
 
     def on_click(self, cell_coords):
@@ -89,7 +89,7 @@ class Board:
         cell = self.get_cell(mouse_pos)
         self.on_click(cell)
 
-    def proov(self):
+    def proov(self): # метод, проверяющией закрашены ли все квадраты
         arr = list(flatten(self.board))
         if 0 in arr:
             return False
@@ -106,21 +106,6 @@ class Button:
         self.inact_color = inact_color
         self.text = text
         self.surf = surf
-
-    def draw(self, x, y):
-        mouse = pygame.mouse.get_pos()
-        click = pygame.mouse.get_pressed()
-        if y < mouse[1] < y + self.height and x < mouse[0] < x + self.width:
-            pygame.draw.rect(self.surf, (self.act_color), self.rect)
-            if click[0] == 1:
-                restart(self.surf)
-                return 1
-        else:
-            pygame.draw.rect(self.surf, (self.inact_color), self.rect)
-        font = pygame.font.Font(None, 35)
-        text_surf = font.render(self.text, True, WHITE)
-        text_rect = text_surf.get_rect(center=self.rect.center)
-        self.surf.blit(text_surf, text_rect)
 
     def draw2(self, x, y):
         mouse = pygame.mouse.get_pos()
@@ -157,8 +142,8 @@ def game_one(surf):
     start_ticks = pygame.time.get_ticks()  # стартовое время в миллисекундах
 
     # Создаем кнопки один раз вне цикла
-    button_done = Button(850, 600, 260, 50, RED, PINK, surf, 'не опять, а снова')
-    button_contin = Button(860, 650, 260, 50, RED, PINK, surf, 'едем дальше')
+    button_done = Button(950, 650, 260, 50, RED, PINK, surf, 'не опять, а снова')
+    button_contin = Button(950, 650, 260, 50, RED, PINK, surf, 'едем дальше')
 
     # Определите шрифт один раз вне цикла
     font = pygame.font.Font('freesansbold.ttf', 64)
@@ -194,18 +179,17 @@ def game_one(surf):
 
         if board.proov():
             time_of_end = secs
-            Tab = pygame.font.SysFont('arial', 85)
-            sc_Text = Tab.render('Yup', True, BLUE, WHITE)
-            cOr = sc_Text.get_rect(center=(1000, 550))
-            surf.blit(sc_Text, cOr)
-            if button_contin.draw2(860, 650) == 2:
+            Tab = pygame.font.SysFont('arial', 30)
+            sc_Text = Tab.render('Вам удалось занять все места автобуса. Задание пройдено успешно!', True, BLUE, WHITE)
+            surf.blit(sc_Text, (80, 655))
+            if button_contin.draw2(950, 650) == 2:
                 pygame.display.update()
                 # СНОВА К АВТОБУСУ
         if millis // 1000 >= 15 and not board.proov():
             tab = pygame.font.SysFont('arial', 30)
             sc_text = tab.render('Вы нe успели и проиграли! Начните игру заново', True, WHITE, BLUE)
-            surf.blit(sc_text, (130, 610))
-            if button_done.draw2(850, 600) == 2:
+            surf.blit(sc_text, (80, 655))
+            if button_done.draw2(950, 650) == 2:
                 pygame.display.update()
 
         pygame.display.flip()
