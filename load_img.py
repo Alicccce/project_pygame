@@ -69,6 +69,7 @@ def load(surf):
                 two(surf)
 
 
+
         surf.blit(rotated_img, (size[0] // 2 - rotated_img.get_width() // 2, size[1] // 2 - rotated_img.get_height() // 2 + 20))
 
         for event in pygame.event.get():
