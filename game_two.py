@@ -12,6 +12,8 @@ BLUE = (0, 0, 255)
 PINK = (255, 100, 100)
 k = 3
 
+pygame.mixer.init()
+sound_button = pygame.mixer.Sound("sounds/klik_no_button.mp3")
 
 
 class Button:
@@ -33,8 +35,10 @@ class Button:
             if click[0] == 1:
                 k -= 1
                 if k == 0:
+                    sound_button.play()
                     game(self.surf)
                 else:
+                    sound_button.play()
                     restart(self.surf)
                 return 1
 
@@ -52,6 +56,7 @@ class Button:
         if y < mouse[1] < y + self.height and x < mouse[0] < x + self.width:
             pygame.draw.rect(self.surf, (self.act_color), self.rect)
             if click[0] == 1:
+                sound_button.play()
                 main(self.surf)
                 return 2
         else:

@@ -5,6 +5,8 @@ from random import *
 from load_img import load
 
 
+
+
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -17,6 +19,7 @@ speed_car = 12
 
 pygame.mixer.init()
 sound_boom = pygame.mixer.Sound("sounds/avaria2.ogg")
+sound_button = pygame.mixer.Sound("sounds/klik_no_button.mp3")
 
 sprts_cars = pygame.sprite.Group()  # группа спрайтов машинок
 all_sprites = pygame.sprite.Group()
@@ -96,6 +99,7 @@ class Button:
         if y < mouse[1] < y + self.height and x < mouse[0] < x + self.width:
             pygame.draw.rect(self.surf, (self.act_color), self.rect)
             if click[0] == 1:
+                sound_button.play()
                 restart(self.surf)
         else:
             pygame.draw.rect(self.surf, (self.inact_color), self.rect)

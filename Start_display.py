@@ -9,6 +9,10 @@ RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 PINK = (255, 100, 100)
 HEIGHT, WIDTH = 750, 1300
+pygame.mixer.init()
+sound_button = pygame.mixer.Sound("sounds/klik_no_button.mp3")
+# sound_button = pygame.mixer.Sound("sounds/molti_button.mp3")
+# sound_button = pygame.mixer.Sound("sounds/qwuq.mp3")
 
 
 def load_image(name, colorkey=None):
@@ -31,6 +35,7 @@ class Button(pygame.sprite.Sprite):
         click = pygame.mouse.get_pressed()
 
         if self.rect.collidepoint(mouse_x, mouse_y) and click[0]:
+            sound_button.play()
             Main_game(surf)
             pygame.quit()
 

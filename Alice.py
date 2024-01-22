@@ -1,3 +1,5 @@
+import random
+
 import pygame
 from pandas.core.common import flatten
 import copy
@@ -14,8 +16,26 @@ LEVEL = {
         [0, 1, 0],
         [0, 1, 0, 1, 0],
         [0, 1, 0, 1, 0, 1, 0, 1, 0]
+    ],
+    'Level 2': [
+        [0, 0, 1, 0, 0, 1, 0, 0, 1],
+        [0, 1, 1, 1, 0],
+        [1, 0, 1],
+        [1, 0, 1, 0, 1],
+        [0, 0, 1, 0, 0, 1, 0, 0, 1]
+
+    ],
+    'Level 3': [
+        [0, 0, 1, 0, 0, 1, 0, 0, 1],
+        [1, 0, 0, 1],
+        [0, 0, 1, 0, 0, 1],
+        [1, 0, 1, 0, 1],
+        [0, 0, 1, 0, 0, 1, 0, 0, 1]
+
     ]
-} # 0 - места, которые нужно занять, 1 - разделения
+}  # 0 - места, которые нужно занять, 1 - разделения
+pygame.mixer.init()
+sound_button = pygame.mixer.Sound("sounds/klik_no_button.mp3")
 
 
 class Board:
@@ -89,7 +109,7 @@ class Board:
         cell = self.get_cell(mouse_pos)
         self.on_click(cell)
 
-    def proov(self): # метод, проверяющией закрашены ли все квадраты
+    def proov(self):  # метод, проверяющией закрашены ли все квадраты
         arr = list(flatten(self.board))
         if 0 in arr:
             return False
@@ -98,7 +118,7 @@ class Board:
 
 
 class Button:
-    def __init__(self, x, y, width, height, act_color, inact_color, surf,  text=''):
+    def __init__(self, x, y, width, height, act_color, inact_color, surf, text=''):
         self.x, self.y = x, y
         self.width, self.height = width, height
         self.rect = pygame.Rect(x, y, width, height)
@@ -113,6 +133,7 @@ class Button:
         if y < mouse[1] < y + self.height and x < mouse[0] < x + self.width:
             pygame.draw.rect(self.surf, (self.act_color), self.rect)
             if click[0] == 1:
+                sound_button.play()
                 main(self.surf)
                 return 2
         else:
@@ -136,7 +157,8 @@ def game_one(surf):
     pygame.init()
     running = True
     time_of_end = False
-    board = Board(100, 'Level 1', surf)
+    a = random.choice(['Level 1', 'Level 2'])
+    board = Board(100, a, surf)
     board.set_view(10, 10, 100)
     clock = pygame.time.Clock()
     start_ticks = pygame.time.get_ticks()  # стартовое время в миллисекундах
