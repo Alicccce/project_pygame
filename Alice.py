@@ -1,176 +1,81 @@
+import random
 import pygame
 import os
-import sys
+from Alice import game_one
+
+
+def two(surf):
+    from game_two import game_two
+    game_two(surf)
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
-PINK = (255, 100, 100)
-k = 2
-
-
-class Button:
-    def __init__(self, x, y, width, height, act_color, inact_color, surf, text=''):
-        self.x, self.y = x, y
-        self.width, self.height = width, height
-        self.rect = pygame.Rect(x, y, width, height)
-        self.act_color = act_color
-        self.inact_color = inact_color
-        self.text = text
-        self.surf = surf
-
-    def draw(self, x, y):
-        global k
-        mouse = pygame.mouse.get_pos()
-        click = pygame.mouse.get_pressed()
-        if y < mouse[1] < y + self.height and x < mouse[0] < x + self.width:
-            pygame.draw.rect(self.surf, (self.act_color), self.rect)
-            if click[0] == 1:
-                k -= 1
-                if k == 0:
-                    main(self.surf)
-                else:
-                    restart(self.surf)
-                return 1
-        else:
-            pygame.draw.rect(self.surf, (self.inact_color), self.rect)
-        font = pygame.font.Font(None, 35)
-        text_surf = font.render(self.text, True, WHITE)
-        text_rect = text_surf.get_rect(center=self.rect.center)
-        self.surf.blit(text_surf, text_rect)
-
-
-    def draw2(self, x, y):
-        mouse = pygame.mouse.get_pos()
-        click = pygame.mouse.get_pressed()
-        if y < mouse[1] < y + self.height and x < mouse[0] < x + self.width and click[0] == 1:
-            pygame.draw.rect(self.surf, (self.act_color), self.rect)
-            if k == 0:
-                main(self.surf)
-                return 2
-        else:
-            pygame.draw.rect(self.surf, (self.inact_color), self.rect)
-        font = pygame.font.Font(None, 35)
-        text_surf = font.render(self.text, True, WHITE)
-        text_rect = text_surf.get_rect(center=self.rect.center)
-        self.surf.blit(text_surf, text_rect)
-
-
-def main(surf):
-    from main_game import Main_game
-    Main_game(surf)
+OBSCHIY = (10, 200, 150)
 
 
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
-    if not os.path.isfile(fullname):
-        print(f"Файл с изображением '{fullname}' не найден")
-        sys.exit()
     image = pygame.image.load(fullname)
     return image
 
 
-def check_and_append(event_pos, checkpoints, check):
-    for x, y in checkpoints:
-        if abs(x - event_pos[0]) <= 15 and abs(y - event_pos[1]) <= 15:
-            check.add((x, y))
-            break
-
-
-def restart(surf):
-    game_two(surf)
-
-
-def game_two(surf):
-    global k
+def load(surf):
     pygame.init()
-
+    pygame.font.init()
     running = True
     size = (1300, 750)
-    image = load_image('itog.png')
-    screen = surf
-    drawing_surface = pygame.Surface(image.get_size(), pygame.SRCALPHA)
-
     clock = pygame.time.Clock()
-    start_ticks = pygame.time.get_ticks()  # стартовое время в миллисекундах
-    # Создаем кнопки один раз вне цикла
-    button_done = Button(830, 600, 260, 50, RED, PINK, surf, 'ещё раз')
-    button_doneliv = Button(830, 600, 260, 50, RED, PINK, surf, 'вернуться')
-    button_contin = Button(830, 600, 260, 50, RED, PINK, surf, 'едем дальше')
-    # Определите шрифт один раз вне цикла
-    font = pygame.font.Font('freesansbold.ttf', 64)
 
-    checkpoints = [(320, 87), (221, 262), (68, 432), (441, 423), (68, 267), (263, 185), (458, 103), (197, 421),
-                   (35, 317),
-                   (497, 375), (420, 495)]
-    s, check = [], set()
+    start_ticks = pygame.time.get_ticks()
 
-    time_stop = 20
-    time_of_end = 0
-    freeze_timer = False  # Flag to control frozen timer
+    img_bus_load = load_image('bus_mini.png')
+    angle = 0
+    FONT = pygame.font.SysFont("Roboto", 80)
+    finished = FONT.render("Загрузка", True, "white")
+    finished_rect = finished.get_rect(center=(640, 280))
+
+    rch = random.choice([1, 2])
 
     while running:
-        screen.fill((100, 150, 50))
+        surf.fill(OBSCHIY)
+        rotated_img = pygame.transform.rotozoom(img_bus_load, angle, 1)
+        surf.blit(finished, finished_rect)
+        angle += 1
+        if angle >= 360:
+            angle = 0
+
         millis = pygame.time.get_ticks() - start_ticks
         secs = millis // 1000
-        if secs >= time_stop + 1:
-            secs = time_stop
-        if len(s) == 11:
-            if not freeze_timer:  # Freeze the timer only once
-                freeze_timer = True
-                time_of_end = secs
-            secs = time_of_end
-
+        if secs >= 16:
+            secs = 15
         mins = secs // 60
         secs %= 60
 
-        if millis // 1000 >= time_stop:
-            if len(s) != 11:
-                if k == 0:
-                    tab = pygame.font.SysFont('arial', 26)
-                    sc_text = tab.render('Вы потратили все жизни и проиграли.. Начните заново !', True, WHITE, BLUE)
-                    screen.blit(sc_text, (640, 320))
-                    button_doneliv.draw(830, 600)
-                else:
-                    tab = pygame.font.SysFont('arial', 26)
-                    sc_text = tab.render('Не получилось :( Попробуете выполнить задание заново?', True, WHITE, BLUE)
-                    screen.blit(sc_text, (640, 320))
-                    button_done.draw(830, 600)
 
-        if len(s) == 11 and freeze_timer:
-            time_of_end = secs
-            freeze_timer = True
-            tab = pygame.font.SysFont('arial', 26)
-            sc_text = tab.render('Вам удалось закрасить все необходимые места!', True, WHITE, BLUE)
-            screen.blit(sc_text, (640, 320))
-            if button_contin.draw2(830, 600) == 2:
-                pygame.display.update()
+        if rch == 1:
+            tab = pygame.font.SysFont('arial', 35)
+            sc_text = tab.render('Вам предстоит закрасить все клетки.', True, OBSCHIY, WHITE)
+            surf.blit(sc_text, (405, 500))
+        else:
+            tab = pygame.font.SysFont('arial', 35)
+            sc_text = tab.render('Вам предстоит провести все маршруты (дороги).', True, OBSCHIY, WHITE)
+            surf.blit(sc_text, (390, 500))
+        if secs == 4:
+            if rch == 1:
+                game_one(surf)
+            elif rch == 2:
+                two(surf)
+
+
+        surf.blit(rotated_img, (size[0] // 2 - rotated_img.get_width() // 2, size[1] // 2 - rotated_img.get_height() // 2 + 20))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos
-            if event.type == pygame.MOUSEMOTION or event.type == pygame.MOUSEBUTTONDOWN:
-                if pygame.mouse.get_pressed()[0] and (millis // 1000 < time_stop and len(s) != 11):
-                    pygame.draw.circle(drawing_surface, BLUE, event.pos, 7.5)
-                    check_and_append(event.pos, checkpoints, check)
-
-        for ch in check:
-            for hc in checkpoints:
-                if ch == hc and ch not in s:
-                    s.append(ch)
-
-        # Render the new timer text
-        text = font.render('{}:{}'.format(mins, secs), True, WHITE)
-        textRect = text.get_rect(center=(900, 250))
-
-        screen.blit(text, textRect)
-        screen.blit(image, (0, 0))
-        screen.blit(drawing_surface, (0, 0))
 
         pygame.display.flip()
-        clock.tick(60)  # Ограничить до 60 кадров в секунду
+        clock.tick(30)
 
     pygame.quit()
