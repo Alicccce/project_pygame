@@ -25,7 +25,6 @@ class Button(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = 500
         self.rect.y = 314
-        self.mask_bus = pygame.mask.from_surface(self.image)
 
     def update(self, keys, surf):
         mouse_x, mouse_y = pygame.mouse.get_pos()

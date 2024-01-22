@@ -13,7 +13,6 @@ LEVEL = {
         [0, 1, 0],
         [0, 1, 0],
         [0, 1, 0, 1, 0, 1, 0, 1, 0]
-
     ]
 }
 
@@ -85,7 +84,6 @@ class Board:
             row, col = cell_coords
             if self.board[row][col] == 0:
                 self.board[row][col] = 5
-                print(5)
 
     def get_click(self, mouse_pos):
         cell = self.get_cell(mouse_pos)
@@ -116,7 +114,7 @@ class Button:
             pygame.draw.rect(self.surf, (self.act_color), self.rect)
             if click[0] == 1:
                 restart(self.surf)
-            return 1
+                return 1
         else:
             pygame.draw.rect(self.surf, (self.inact_color), self.rect)
         font = pygame.font.Font(None, 35)
@@ -131,7 +129,7 @@ class Button:
             pygame.draw.rect(self.surf, (self.act_color), self.rect)
             if click[0] == 1:
                 main(self.surf)
-            return 2
+                return 2
         else:
             pygame.draw.rect(self.surf, (self.inact_color), self.rect)
         font = pygame.font.Font(None, 35)
@@ -141,13 +139,12 @@ class Button:
 
 
 def restart(surf):
-    from Start_display import start
-    start(surf)
+    game_one(surf)
+
 
 def main(surf):
     from main_game import Main_game
     Main_game(surf)
-
 
 
 def game_one(surf):
@@ -176,7 +173,6 @@ def game_one(surf):
         mins = secs // 60
         secs %= 60
 
-
         # Обновляем текст один раз на каждый тик
         text = font.render('{}:{}'.format(mins, secs), True, WHITE, (100, 100, 100))
         textRect = text.get_rect(center=(1000, 280))
@@ -188,6 +184,7 @@ def game_one(surf):
                 x, y = event.pos
                 if secs < 15:
                     board.get_click(event.pos)
+
                 board.render(surf)
 
         # Рендеринг экрана и объектов
@@ -203,16 +200,15 @@ def game_one(surf):
             surf.blit(sc_Text, cOr)
             if button_contin.draw2(860, 650) == 2:
                 pygame.display.update()
-
+                # СНОВА К АВТОБУСУ
         if millis // 1000 >= 15 and not board.proov():
             tab = pygame.font.SysFont('arial', 30)
-            sc_text = tab.render('Вы нe успели! Попробуете выполнить задание заново?', True, WHITE, BLUE)
+            sc_text = tab.render('Вы нe успели и проиграли! Начните игру заново', True, WHITE, BLUE)
             surf.blit(sc_text, (130, 610))
-            if button_done.draw(850, 600) == 1:
+            if button_done.draw2(850, 600) == 2:
                 pygame.display.update()
 
         pygame.display.flip()
         clock.tick(60)  # Ограничить до 60 кадров в секунду
 
     pygame.quit()
-
