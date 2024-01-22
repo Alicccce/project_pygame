@@ -182,5 +182,3 @@ def game_two(surf):
 
     pygame.quit()
 
-screen = pygame.display.set_mode((1300, 750))
-game_two(screen)
