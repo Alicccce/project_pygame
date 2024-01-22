@@ -8,3 +8,4 @@ def play():
     start(screen)
 
 play()
+

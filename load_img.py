@@ -12,7 +12,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
-PINK = (255, 100, 100)
+OBSCHIY = (10, 200, 150)
 
 
 def load_image(name, colorkey=None):
@@ -36,11 +36,13 @@ def load(surf):
     finished = FONT.render("Загрузка", True, "white")
     finished_rect = finished.get_rect(center=(640, 280))
 
+    rch = random.choice([1, 2])
+
     while running:
-        surf.fill((10, 200, 150))
+        surf.fill(OBSCHIY)
         rotated_img = pygame.transform.rotozoom(img_bus_load, angle, 1)
         surf.blit(finished, finished_rect)
-        angle += 1  #
+        angle += 1
         if angle >= 360:
             angle = 0
 
@@ -51,23 +53,29 @@ def load(surf):
         mins = secs // 60
         secs %= 60
 
+
+        if rch == 1:
+            tab = pygame.font.SysFont('arial', 35)
+            sc_text = tab.render('Вам предстоит закрасить все клетки.', True, OBSCHIY, WHITE)
+            surf.blit(sc_text, (405, 500))
+        else:
+            tab = pygame.font.SysFont('arial', 35)
+            sc_text = tab.render('Вам предстоит провести все маршруты (дороги).', True, OBSCHIY, WHITE)
+            surf.blit(sc_text, (390, 500))
         if secs == 4:
-            two(surf)
+            if rch == 1:
+                game_one(surf)
+            elif rch == 2:
+                two(surf)
 
 
-
-        surf.blit(rotated_img,
-                  (size[0] // 2 - rotated_img.get_width() // 2, size[1] // 2 - rotated_img.get_height() // 2 + 20))
+        surf.blit(rotated_img, (size[0] // 2 - rotated_img.get_width() // 2, size[1] // 2 - rotated_img.get_height() // 2 + 20))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
-
-
         pygame.display.flip()
         clock.tick(30)
 
     pygame.quit()
-
-
