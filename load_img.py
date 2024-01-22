@@ -61,7 +61,7 @@ def load(surf):
         else:
             tab = pygame.font.SysFont('arial', 35)
             sc_text = tab.render('Вам предстоит провести все маршруты (дороги).', True, OBSCHIY, WHITE)
-            surf.blit(sc_text, (390, 500))
+            surf.blit(sc_text, (330, 500))
         if secs == 4:
             if rch == 1:
                 game_one(surf)
