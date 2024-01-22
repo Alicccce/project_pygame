@@ -17,14 +17,15 @@ def load_image(name, colorkey=None):
     return image
 
 class Button(pygame.sprite.Sprite):
-    image = load_image('game_over.png')
+    image = load_image("start1.png")
 
     def __init__(self, *group):
         super().__init__(*group)
         self.image = Button.image
         self.rect = self.image.get_rect()
-        self.rect.x = 400
+        self.rect.x = 500
         self.rect.y = 340
+        self.mask_bus = pygame.mask.from_surface(self.image)
 
     def update(self, keys, surf):
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -33,18 +34,18 @@ class Button(pygame.sprite.Sprite):
         if self.rect.collidepoint(mouse_x, mouse_y) and click[0]:
             Main_game(surf)
             pygame.quit()
+            print(2)
 
 
-def end(surf):
+def start(surf):
     pygame.init()
     pygame.font.init()
     running = True
     all_sprites = pygame.sprite.Group()
     clock = pygame.time.Clock()
 
-    FONT = pygame.font.SysFont("Roboto", 65)
-    finished = FONT.render('Вы проехали все остановки и не попались!', True, BLACK)
-    again = FONT.render('Нажмите на кнопку, если хотите сыграть ещё раз', True, BLACK)
+    FONT = pygame.font.SysFont("Roboto", 130)
+    finished = FONT.render('Смурфики', True, WHITE)
     Button(all_sprites)
     imgtr = load_image('trop.png')
     imgg = load_image('roof_g.png')
@@ -53,6 +54,7 @@ def end(surf):
     roof_v_positions = [(1085, -68), (720, -68), (840, -68)]
     xx, yy = 0, 45
 
+    # создание крыш ниже
     for x, y in roof_g_positions:
         sprite = pygame.sprite.Sprite()
         sprite.image = imgg
@@ -60,9 +62,6 @@ def end(surf):
         all_sprites.add(sprite)
         sprite.rect.x = x
         sprite.rect.y = y
-
-
-
     for x, y in roof_v_positions:
         sprite = pygame.sprite.Sprite()
         sprite.image = imgv
@@ -74,8 +73,7 @@ def end(surf):
     while running:
         surf.fill((150, 190, 100))
         surf.blit(imgtr, (xx, yy))
-        surf.blit(finished, (150, 215))
-        surf.blit(again, (120, 545))
+        surf.blit(finished, (405, 185))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -91,4 +89,4 @@ def end(surf):
 
 
 surf = pygame.display.set_mode((1300, 750))
-end(surf)
+start(surf)
