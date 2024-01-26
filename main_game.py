@@ -15,7 +15,7 @@ PINK = (255, 100, 100)
 LIGHT_GREEN = (100, 200, 100)
 HEIGHT, WIDTH = 750, 1300
 col_stat = choice([4, 9, 7, 4, 11, 16])
-speed_car = 12
+speed_car = 14
 
 pygame.mixer.init()
 sound_boom = pygame.mixer.Sound("sounds/avaria2.ogg")
@@ -191,7 +191,7 @@ def Main_game(surf):
 
     xx, yy = 0, 45  # координаты расположения изображения дороги
     X1, Y1 = 1280, 45
-    roof_g_speed = 4
+    roof_g_speed = 5
     roof_g_positions = [(490, -35), (80, -35), (225, -35)]
     roof_v_positions = [(1085, -68), (720, -68), (840, -68)]
 
