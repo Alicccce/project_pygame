@@ -1,5 +1,4 @@
 import random
-
 import pygame
 from pandas.core.common import flatten
 import copy
