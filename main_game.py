@@ -12,12 +12,14 @@ GREEN = (0, 255, 0)
 PINK = (255, 100, 100)
 LIGHT_GREEN = (100, 200, 100)
 HEIGHT, WIDTH = 750, 1300
-col_stat = choice([4, 9, 7, 4, 11, 16])
+col_stat = choice([4, 9, 7, 5])
 speed_car = 14
 
 pygame.mixer.init()
 sound_boom = pygame.mixer.Sound("sounds/avaria2.ogg")
 sound_button = pygame.mixer.Sound("sounds/molti_button.mp3")
+# pygame.mixer.music.load('sounds/fon_mus.mp3')
+pygame.mixer.music.load('sounds/super_musick.mp3')
 
 sprts_cars = pygame.sprite.Group()  # группа спрайтов машинок
 all_sprites = pygame.sprite.Group()
@@ -143,6 +145,8 @@ class Cars(pygame.sprite.Sprite):
                     col_stat -= 1
                 else:
                     over(screen)
+                    pygame.mixer.music.stop()
+                pygame.mixer.music.stop()
                 load(screen)
                 pygame.quit()
             self.forx.append(self.rect.x)
@@ -152,6 +156,7 @@ class Cars(pygame.sprite.Sprite):
 def Main_game(surf):
     global screen, speed_car
     pygame.display.flip()
+    pygame.mixer.music.play()
 
 
     for_x = []  # список "занятых" абцисс машинок
@@ -167,7 +172,7 @@ def Main_game(surf):
     clock = pygame.time.Clock()
     start_ticks = pygame.time.get_ticks()
     bus = Bus(all_sprites)
-    l = choice([3, 14, 30, 21, 9])
+    l = choice([3, 14, 9])
 
     cor_y = [90, 200, 310, 420, 530, 640]  # список ординат для полос дороги
     x1, x2 = ox_operations(ox)[0], ox_operations(ox)[0]
