@@ -67,9 +67,9 @@ class Bus(pygame.sprite.Sprite):
 
     def update(self, keys, surf):
         # ниже контроль движения автобуса
-        if keys[pygame.K_w] and self.rect.y + 14 >= 85 and speed_car != 0:
+        if (keys[pygame.K_w] or keys[pygame.K_UP]) and self.rect.y + 14 >= 85 and speed_car != 0:
             self.rect.y -= 6
-        if keys[pygame.K_s] and self.rect.y + 111 <= 728 and speed_car != 0:
+        if (keys[pygame.K_s] or keys[pygame.K_DOWN]) and self.rect.y + 111 <= 728 and speed_car != 0:
             self.rect.y += 6
 
 
