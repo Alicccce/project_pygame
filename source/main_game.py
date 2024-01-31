@@ -72,34 +72,7 @@ class Bus(pygame.sprite.Sprite):
         if keys[pygame.K_s] and self.rect.y + 111 <= 728 and speed_car != 0:
             self.rect.y += 6
 
-def ox_operations(s):  # функция генерации абциссы на старте у машинки
-    if s != []:
-        x = choice(s)
-        s.remove(x)
-        return x, s
 
-
-def smena(x, y, surf):  # функция вывода "окончания" основной игры
-    buyt = Button(500, 600, 260, 50, GREEN, LIGHT_GREEN, surf, 'играть')
-    buyt.draw3(500, 600)
-    tab = pygame.font.SysFont('arial', 26)
-    sc_text = tab.render('Авария! Вы проиграли. Попробуете снова?', True, BLACK, (90, 200, 70))
-    surf.blit(sc_text, (430, 500))
-    s = pygame.transform.scale(load_image('yup.jpg'), (200, 200))
-    surf.blit(s, (530, 250))
-    bu = pygame.transform.scale(load_image('boo.png'), (200, 200))  # картинка взрыва
-    surf.blit(bu, (x - 70, y - 50))
-
-
-def restart(surf):
-    global speed_car
-    speed_car = 12
-    Main_game(surf)
-
-
-def over(surf):
-    from source.End_display import end
-    end(surf)
 
 
 class Cars(pygame.sprite.Sprite):
@@ -142,6 +115,35 @@ class Cars(pygame.sprite.Sprite):
                 pygame.quit()
             self.forx.append(self.rect.x)
             self.ox_per.remove(self.rect.x)
+
+def ox_operations(s):  # функция генерации абциссы на старте у машинки
+    if s != []:
+        x = choice(s)
+        s.remove(x)
+        return x, s
+
+
+def smena(x, y, surf):  # функция вывода "окончания" основной игры
+    buyt = Button(500, 600, 260, 50, GREEN, LIGHT_GREEN, surf, 'играть')
+    buyt.draw3(500, 600)
+    tab = pygame.font.SysFont('arial', 26)
+    sc_text = tab.render('Авария! Вы проиграли. Попробуете снова?', True, BLACK, (90, 200, 70))
+    surf.blit(sc_text, (430, 500))
+    s = pygame.transform.scale(load_image('yup.jpg'), (200, 200))
+    surf.blit(s, (530, 250))
+    bu = pygame.transform.scale(load_image('boo.png'), (200, 200))  # картинка взрыва
+    surf.blit(bu, (x - 70, y - 50))
+
+
+def restart(surf):
+    global speed_car
+    speed_car = 12
+    Main_game(surf)
+
+
+def over(surf):
+    from source.End_display import end
+    end(surf)
 
 
 def Main_game(surf):
