@@ -1,5 +1,5 @@
 import pygame
-import os
+from source.functions import load_image
 import sys
 from random import *
 from source.load_img import load
@@ -25,44 +25,6 @@ sprts_cars = pygame.sprite.Group()  # группа спрайтов машино
 all_sprites = pygame.sprite.Group()
 
 
-def load_image(name, colorkey=None):
-    fullname = os.path.join('resource/data', name)
-    # если файл не существцует, то выходим
-    if not os.path.isfile(fullname):
-        print(f"Файл с изображением '{fullname}' не найден")
-        sys.exit()
-    image = pygame.image.load(fullname)
-    return image
-
-
-def ox_operations(s):  # функция генерации абциссы на старте у машинки
-    if s != []:
-        x = choice(s)
-        s.remove(x)
-        return x, s
-
-
-def smena(x, y, surf):  # функция вывода "окончания" основной игры
-    buyt = Button(500, 600, 260, 50, GREEN, LIGHT_GREEN, surf, 'играть')
-    buyt.draw(500, 600)
-    tab = pygame.font.SysFont('arial', 26)
-    sc_text = tab.render('Авария! Вы проиграли. Попробуете снова?', True, BLACK, (90, 200, 70))
-    surf.blit(sc_text, (430, 500))
-    s = pygame.transform.scale(load_image('yup.jpg'), (200, 200))
-    surf.blit(s, (530, 250))
-    bu = pygame.transform.scale(load_image('boo.png'), (200, 200))  # картинка взрыва
-    surf.blit(bu, (x - 70, y - 50))
-
-
-def restart(surf):
-    global speed_car
-    speed_car = 12
-    Main_game(surf)
-
-
-def over(surf):
-    from source.End_display import end
-    end(surf)
 
 
 class Button:
@@ -75,7 +37,7 @@ class Button:
         self.text = text
         self.surf = surf
 
-    def draw(self, x, y):
+    def draw3(self, x, y):
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
         if y < mouse[1] < y + self.height and x < mouse[0] < x + self.width:
@@ -109,6 +71,35 @@ class Bus(pygame.sprite.Sprite):
             self.rect.y -= 6
         if keys[pygame.K_s] and self.rect.y + 111 <= 728 and speed_car != 0:
             self.rect.y += 6
+
+def ox_operations(s):  # функция генерации абциссы на старте у машинки
+    if s != []:
+        x = choice(s)
+        s.remove(x)
+        return x, s
+
+
+def smena(x, y, surf):  # функция вывода "окончания" основной игры
+    buyt = Button(500, 600, 260, 50, GREEN, LIGHT_GREEN, surf, 'играть')
+    buyt.draw3(500, 600)
+    tab = pygame.font.SysFont('arial', 26)
+    sc_text = tab.render('Авария! Вы проиграли. Попробуете снова?', True, BLACK, (90, 200, 70))
+    surf.blit(sc_text, (430, 500))
+    s = pygame.transform.scale(load_image('yup.jpg'), (200, 200))
+    surf.blit(s, (530, 250))
+    bu = pygame.transform.scale(load_image('boo.png'), (200, 200))  # картинка взрыва
+    surf.blit(bu, (x - 70, y - 50))
+
+
+def restart(surf):
+    global speed_car
+    speed_car = 12
+    Main_game(surf)
+
+
+def over(surf):
+    from source.End_display import end
+    end(surf)
 
 
 class Cars(pygame.sprite.Sprite):

@@ -1,9 +1,6 @@
 import pygame
-import os
-import sys
-def game(surf):
-    from source.Start_display import start
-    start(surf)
+from source.functions import load_image
+
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -69,17 +66,11 @@ class Button:
 
 
 def main(surf):
-    from main_game import Main_game
+    from source.main_game import Main_game
     Main_game(surf)
 
 
-def load_image(name, colorkey=None):
-    fullname = os.path.join('resource/data', name)
-    if not os.path.isfile(fullname):
-        print(f"Файл с изображением '{fullname}' не найден")
-        sys.exit()
-    image = pygame.image.load(fullname)
-    return image
+
 
 
 def check_and_append(event_pos, checkpoints, check):
@@ -88,6 +79,9 @@ def check_and_append(event_pos, checkpoints, check):
             check.add((x, y))
             break
 
+def game(surf):
+    from source.Start_display import start
+    start(surf)
 
 def restart(surf):
     game_two(surf)
@@ -188,6 +182,3 @@ def game_two(surf):
 
     pygame.quit()
 
-
-screen = pygame.display.set_mode((1300, 750))
-game_two(screen)
