@@ -13,7 +13,7 @@ pygame.mixer.init()
 sound_button = pygame.mixer.Sound("resource/sounds/molti_button.mp3")
 
 def load_image(name, colorkey=None):
-    fullname = os.path.join('data', name)
+    fullname = os.path.join('resource/data', name)
     image = pygame.image.load(fullname)
     return image
 

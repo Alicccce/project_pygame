@@ -10,13 +10,13 @@ BLUE = (0, 0, 255)
 PINK = (255, 100, 100)
 HEIGHT, WIDTH = 750, 1300
 pygame.mixer.init()
-sound_button = pygame.mixer.Sound("sounds/button_start.mp3")
+sound_button = pygame.mixer.Sound("resource/sounds/button_start.mp3")
 # sound_button = pygame.mixer.Sound("sounds/molti_button.mp3")
 # sound_button = pygame.mixer.Sound("sounds/qwuq.mp3")
 
 
 def load_image(name, colorkey=None):
-    fullname = os.path.join('data', name)
+    fullname = os.path.join('resource/data', name)
     image = pygame.image.load(fullname)
     return image
 

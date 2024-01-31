@@ -18,7 +18,7 @@ OBSCHIY = (10, 200, 150)
 
 
 def load_image(name, colorkey=None):
-    fullname = os.path.join('data', name)
+    fullname = os.path.join('resource/data', name)
     image = pygame.image.load(fullname)
     return image
 
