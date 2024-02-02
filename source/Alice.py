@@ -2,6 +2,7 @@ import random
 import pygame
 from pandas.core.common import flatten
 import copy
+from source.functions import load_image
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -34,6 +35,7 @@ LEVEL = {
 }  # 0 - места, которые нужно занять, 1 - разделения
 pygame.mixer.init()
 sound_button = pygame.mixer.Sound("resource/sounds/molti_button.mp3")
+chair_xs_img = ['chair_blu.png', 'chair_red.png']
 
 
 class Board:
@@ -60,13 +62,15 @@ class Board:
             row_height = 0  # Высота текущей строки
             for col_index, cell in enumerate(row):
                 if cell == 1:
-                    pygame.draw.rect(screen, WHITE, (top_x, top_y, self.small_size_rect_x, self.small_size_rect_y), 1)
+                    # pygame.draw.rect(screen, WHITE, (top_x, top_y, self.small_size_rect_x, self.small_size_rect_y), 1)
                     top_x += self.small_size_rect_x
                     row_height = max(row_height, self.small_size_rect_y)
                 else:
-                    color = RED if cell == 5 else WHITE
-                    pygame.draw.rect(screen, color, (top_x, top_y, self.cell_size, self.cell_size),
-                                     1 if cell == 0 else 0)
+                    if cell == 0:
+                        image = load_image(chair_xs_img[0])
+                    elif cell == 5:
+                        image = load_image(chair_xs_img[1])
+                    screen.blit(image, (top_x, top_y))
                     top_x += self.cell_size
                     row_height = max(row_height, self.cell_size)
             top_y += row_height + self.row_spacing
@@ -167,6 +171,8 @@ def game_one(surf):
 
     # Определите шрифт один раз вне цикла
     font = pygame.font.Font('freesansbold.ttf', 64)
+
+
 
     while running:
         millis = pygame.time.get_ticks() - start_ticks

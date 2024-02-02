@@ -230,6 +230,6 @@ def Main_game(surf):
                 sys.exit()
 
         pygame.display.flip()
-        clock.tick(60)  # Ограничить до 60 кадров в секунду
+        clock.tick(100)  # Ограничить до 60 кадров в секунду
 
     pygame.display.update()
