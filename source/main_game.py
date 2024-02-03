@@ -149,6 +149,7 @@ def over(surf):
 def Main_game(surf):
     global screen, speed_car
     pygame.display.flip()
+    pygame.mixer.music.set_volume(0.12)
     pygame.mixer.music.play()
 
 

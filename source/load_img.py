@@ -2,6 +2,7 @@ import random
 import pygame
 import os
 from source.Alice import game_one
+from source.functions import load_image
 
 
 def two(surf):
@@ -15,6 +16,7 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 OBSCHIY = (10, 200, 150)
+load_fraze_img = ['load_dorog1.png', 'load_kl.png']
 
 
 def load_image(name, colorkey=None):
@@ -57,13 +59,11 @@ def load(surf):
 
 
         if rch == 1:
-            tab = pygame.font.SysFont('arial', 35)
-            sc_text = tab.render('Вам предстоит закрасить все клетки.', True, OBSCHIY, WHITE)
-            surf.blit(sc_text, (405, 500))
+            imag = load_image(load_fraze_img[1])
+            surf.blit(imag, (450, 465))
         else:
-            tab = pygame.font.SysFont('arial', 35)
-            sc_text = tab.render('Вам предстоит провести все маршруты (дороги).', True, OBSCHIY, WHITE)
-            surf.blit(sc_text, (330, 500))
+            imag = load_image(load_fraze_img[0])
+            surf.blit(imag, (450, 465))
         if secs == 4:
             if rch == 1:
                 game_one(surf)
