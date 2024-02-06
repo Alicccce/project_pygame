@@ -18,12 +18,19 @@ speed_car = 14
 pygame.mixer.init()
 sound_boom = pygame.mixer.Sound("resource/sounds/avaria2.ogg")
 sound_button = pygame.mixer.Sound("resource/sounds/molti_button.mp3")
-# pygame.mixer.music.load('sounds/fon_mus.mp3')
 pygame.mixer.music.load('resource/sounds/super_musick.mp3')
 
 sprts_cars = pygame.sprite.Group()  # группа спрайтов машинок
 all_sprites = pygame.sprite.Group()
 
+end_sprites = pygame.sprite.LayeredUpdates()
+
+sprite = pygame.sprite.Sprite()
+sprite.image = load_image("yup.jpg")
+sprite.rect = sprite.image.get_rect()
+sprite.rect.x = 490
+sprite.rect.y = 150
+end_sprites.add(sprite)
 
 
 
@@ -73,8 +80,6 @@ class Bus(pygame.sprite.Sprite):
             self.rect.y += 6
 
 
-
-
 class Cars(pygame.sprite.Sprite):
     def __init__(self, all_sprites, name, ox_per, for_x, l):  # name = ('png', (x, y))
         super().__init__(all_sprites)
@@ -86,7 +91,7 @@ class Cars(pygame.sprite.Sprite):
         self.mask_car = pygame.mask.from_surface(self.image)
         self.add(sprts_cars)  # добавление текущей машинки в список спрайтов
         self.forx = for_x
-        self.forx.append(self.rect.x)# добавление "использованной" координаты х для машинки
+        self.forx.append(self.rect.x)  # добавление "использованной" координаты х для машинки
         self.boom = 0
 
     def update(self, speed, bus):
@@ -94,12 +99,6 @@ class Cars(pygame.sprite.Sprite):
         cor_y = [90, 200, 310, 420, 530, 640]
         self.rect.x -= speed_car
         p = choice(self.ox_per)  # выбор абциссы старта машинки при достижении левой границы
-        if pygame.sprite.collide_mask(self, bus):  # если машинки сталкнулись
-            if self.boom == 0:
-                sound_boom.play()
-                self.boom += 1
-            smena(self.rect.x, self.rect.y, screen)
-            speed_car = 0
         # далее проверяется то, когда машинки заезжают за стену
         if self.rect.x + self.rect.width < 0 and p not in self.forx:
             self.rect.x = (p)
@@ -115,6 +114,13 @@ class Cars(pygame.sprite.Sprite):
                 pygame.quit()
             self.forx.append(self.rect.x)
             self.ox_per.remove(self.rect.x)
+        if pygame.sprite.collide_mask(self, bus):  # если машинки сталкнулись
+            if self.boom == 0:
+                sound_boom.play()
+                self.boom += 1
+            smena(self.rect.x, self.rect.y, screen)
+            speed_car = 0
+
 
 def ox_operations(s):  # функция генерации абциссы на старте у машинки
     if s != []:
@@ -127,10 +133,10 @@ def smena(x, y, surf):  # функция вывода "окончания" ос�
     buyt = Button(500, 600, 260, 50, GREEN, LIGHT_GREEN, surf, 'играть')
     buyt.draw3(500, 600)
     tab = pygame.font.SysFont('arial', 26)
+    end_sprites.draw(surf)
     sc_text = tab.render('Авария! Вы проиграли. Попробуете снова?', True, BLACK, (90, 200, 70))
     surf.blit(sc_text, (430, 500))
-    s = pygame.transform.scale(load_image('yup.jpg'), (200, 200))
-    surf.blit(s, (530, 250))
+
     bu = pygame.transform.scale(load_image('boo.png'), (200, 200))  # картинка взрыва
     surf.blit(bu, (x - 70, y - 50))
 
@@ -152,7 +158,6 @@ def Main_game(surf):
     pygame.mixer.music.set_volume(0.12)
     pygame.mixer.music.play()
 
-
     for_x = []  # список "занятых" абцисс машинок
     ox = 0
     ox = [i for i in range(WIDTH + 10, WIDTH + 5001, 150)]  # ось ох (координата машинки),
@@ -167,6 +172,7 @@ def Main_game(surf):
     start_ticks = pygame.time.get_ticks()
     bus = Bus(all_sprites)
     l = choice([3, 14, 9])
+    end_surface = pygame.Surface((1300, 750), pygame.SRCALPHA)
 
     cor_y = [90, 200, 310, 420, 530, 640]  # список ординат для полос дороги
     x1, x2 = ox_operations(ox)[0], ox_operations(ox)[0]
