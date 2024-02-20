@@ -94,6 +94,7 @@ def game_two(surf):
     running = True
     size = (1300, 750)
     image = load_image('itog.png')
+    zero_xp = load_image('zero_xp.png')
     screen = surf
     drawing_surface = pygame.Surface(image.get_size(), pygame.SRCALPHA)
 
@@ -102,7 +103,7 @@ def game_two(surf):
     # Создаем кнопки один раз вне цикла
     button_done = Button(765, 500, 260, 50, RED, PINK, surf, 'ещё раз')
     button_doneliv = Button(765, 500, 260, 50, RED, PINK, surf, 'вернуться')
-    button_contin = Button(765, 500, 260, 50, RED, PINK, surf, 'едем дальше')
+    button_contin = Button(775, 500, 260, 50, RED, PINK, surf, 'едем дальше')
     # Определите шрифт один раз вне цикла
     font = pygame.font.Font('freesansbold.ttf', 64)
 
@@ -117,6 +118,7 @@ def game_two(surf):
     freeze_timer = False  # Flag to control frozen timer
 
     while running:
+
         screen.fill((100, 150, 50))
         screen.blit(heart_img, (1165, 5))
         millis = pygame.time.get_ticks() - start_ticks
@@ -135,9 +137,7 @@ def game_two(surf):
         if millis // 1000 >= time_stop:
             if len(s) != 11:
                 if k == 0:
-                    tab = pygame.font.SysFont('arial', 26)
-                    sc_text = tab.render('Вы потратили все жизни и проиграли.. Начните заново !', True, WHITE, BLUE)
-                    screen.blit(sc_text, (640, 320))
+                    screen.blit(zero_xp, (690, 320))
                     button_doneliv.draw(765, 500, 1)
                 else:
 
@@ -148,10 +148,9 @@ def game_two(surf):
         if len(s) == 11 and freeze_timer:
             time_of_end = secs
             freeze_timer = True
-            tab = pygame.font.SysFont('arial', 26)
             sc_text = load_image('road_game_two.png')
-            screen.blit(sc_text, (740, 320))
-            if button_contin.draw2(765, 500) == 2:
+            screen.blit(sc_text, (720, 320))
+            if button_contin.draw2(775, 500) == 2:
                 pygame.display.update()
 
         for event in pygame.event.get():
@@ -178,6 +177,7 @@ def game_two(surf):
         screen.blit(drawing_surface, (0, 0))
 
         pygame.display.flip()
+
         clock.tick(60)  # Ограничить до 60 кадров в секунду
 
     pygame.quit()

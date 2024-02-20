@@ -164,6 +164,8 @@ def game_one(surf):
     board.set_view(10, 10, 100)
     clock = pygame.time.Clock()
     start_ticks = pygame.time.get_ticks()  # стартовое время в миллисекундах
+    img_good_end = load_image('bus_good.png')
+    img_bad_end = load_image('bus_bad.png')
 
     # Создаем кнопки один раз вне цикла
     button_done = Button(950, 650, 260, 50, RED, PINK, surf, 'не опять, а снова')
@@ -205,16 +207,12 @@ def game_one(surf):
 
         if board.proov():
             time_of_end = secs
-            Tab = pygame.font.SysFont('arial', 30)
-            sc_Text = Tab.render('Вам удалось занять все места автобуса. Задание пройдено успешно!', True, BLUE, WHITE)
-            surf.blit(sc_Text, (80, 655))
+            surf.blit(img_good_end, (50, 620))
             if button_contin.draw2(950, 650) == 2:
                 pygame.display.update()
                 # СНОВА К АВТОБУСУ
         if millis // 1000 >= 15 and not board.proov():
-            tab = pygame.font.SysFont('arial', 30)
-            sc_text = tab.render('Вы нe успели и проиграли! Начните игру заново', True, WHITE, BLUE)
-            surf.blit(sc_text, (80, 655))
+            surf.blit(img_bad_end, (80, 620))
             if button_done.draw2(950, 650) == 2:
                 pygame.display.update()
 
