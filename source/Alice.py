@@ -35,7 +35,7 @@ LEVEL = {
 }  # 0 - места, которые нужно занять, 1 - разделения
 pygame.mixer.init()
 sound_button = pygame.mixer.Sound("resource/sounds/molti_button.mp3")
-chair_xs_img = ['chair_blu.png', 'chair_red.png']
+chair_xs_img = ['qub.png', 'red_qub.png']
 
 
 class Board:
@@ -161,15 +161,15 @@ def game_one(surf):
     time_of_end = False
     a = random.choice(['Level 1', 'Level 2', 'Level 3'])
     board = Board(100, a, surf)
-    board.set_view(10, 10, 100)
+    board.set_view(35, 70, 100)
     clock = pygame.time.Clock()
     start_ticks = pygame.time.get_ticks()  # стартовое время в миллисекундах
     img_good_end = load_image('bus_good.png')
     img_bad_end = load_image('bus_bad.png')
 
     # Создаем кнопки один раз вне цикла
-    button_done = Button(950, 650, 260, 50, RED, PINK, surf, 'не опять, а снова')
-    button_contin = Button(950, 650, 260, 50, RED, PINK, surf, 'едем дальше')
+    button_done = Button(975, 650, 260, 50, RED, PINK, surf, 'не опять, а снова')
+    button_contin = Button(975, 650, 260, 50, RED, PINK, surf, 'едем дальше')
 
     # Определите шрифт один раз вне цикла
     font = pygame.font.Font('freesansbold.ttf', 64)
@@ -177,6 +177,7 @@ def game_one(surf):
 
 
     while running:
+
         millis = pygame.time.get_ticks() - start_ticks
         secs = millis // 1000
         if secs >= 16:
@@ -188,7 +189,8 @@ def game_one(surf):
 
         # Обновляем текст один раз на каждый тик
         text = font.render('{}:{}'.format(mins, secs), True, WHITE, (100, 100, 100))
-        textRect = text.get_rect(center=(1000, 280))
+        textRect = text.get_rect(center=(1100, 280))
+
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -198,22 +200,25 @@ def game_one(surf):
                 if secs < 15:
                     board.get_click(event.pos)
 
+
                 board.render(surf)
+
 
         # Рендеринг экрана и объектов
         surf.fill((100, 100, 100))
+        surf.blit(load_image('bus_bus.png'), (5, 5))
         board.render(surf)
         surf.blit(text, textRect)
 
         if board.proov():
             time_of_end = secs
-            surf.blit(img_good_end, (50, 620))
-            if button_contin.draw2(950, 650) == 2:
+            surf.blit(img_good_end, (915, 350))
+            if button_contin.draw2(970, 650) == 2:
                 pygame.display.update()
                 # СНОВА К АВТОБУСУ
         if millis // 1000 >= 15 and not board.proov():
-            surf.blit(img_bad_end, (80, 620))
-            if button_done.draw2(950, 650) == 2:
+            surf.blit(img_bad_end, (915, 350))
+            if button_done.draw2(970, 650) == 2:
                 pygame.display.update()
 
         pygame.display.flip()

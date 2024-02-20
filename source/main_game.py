@@ -133,10 +133,10 @@ def ox_operations(s):  # функция генерации абциссы на �
 
 def smena(x, y, surf):  # функция вывода "окончания" основной игры
     img_avar = load_image('avaria_res.png')
-    buyt = Button(510, 620, 260, 50, GREEN, LIGHT_GREEN, surf, 'играть')
-    buyt.draw3(501, 620)
+    buyt = Button(500, 600, 260, 50, GREEN, LIGHT_GREEN, surf, 'играть')
+    buyt.draw3(500, 600)
     end_sprites.draw(surf)
-    surf.blit(img_avar, (475, 490))
+    surf.blit(img_avar, (475, 485))
     bu = pygame.transform.scale(load_image('boo.png'), (200, 200))  # картинка взрыва
     surf.blit(bu, (x - 70, y - 50))
 
