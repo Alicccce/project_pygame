@@ -13,7 +13,7 @@ PINK = (255, 100, 100)
 LIGHT_GREEN = (100, 200, 100)
 HEIGHT, WIDTH = 750, 1300
 col_stat = choice([4, 9, 7, 5])
-speed_car = 14
+speed_car = 12
 
 pygame.mixer.init()
 sound_boom = pygame.mixer.Sound("resource/sounds/avaria2.ogg")
@@ -21,7 +21,7 @@ sound_button = pygame.mixer.Sound("resource/sounds/molti_button.mp3")
 pygame.mixer.music.load('resource/sounds/super_musick.mp3')
 
 sprts_cars = pygame.sprite.Group()  # группа спрайтов машинок
-all_sprites = pygame.sprite.Group()
+
 
 end_sprites = pygame.sprite.LayeredUpdates()
 
@@ -30,6 +30,7 @@ sprite.image = load_image("yup.jpg")
 sprite.rect = sprite.image.get_rect()
 sprite.rect.x = 490
 sprite.rect.y = 150
+
 end_sprites.add(sprite)
 
 
@@ -75,17 +76,18 @@ class Bus(pygame.sprite.Sprite):
     def update(self, keys, surf):
         # ниже контроль движения автобуса
         if (keys[pygame.K_w] or keys[pygame.K_UP]) and self.rect.y + 14 >= 85 and speed_car != 0:
-            self.rect.y -= 6
+            self.rect.y -= 7
         if (keys[pygame.K_s] or keys[pygame.K_DOWN]) and self.rect.y + 111 <= 728 and speed_car != 0:
-            self.rect.y += 6
+            self.rect.y += 7
 
 
 class Cars(pygame.sprite.Sprite):
-    def __init__(self, all_sprites, name, ox_per, for_x, l):  # name = ('png', (x, y))
+    def __init__(self, all_sprites, name, ox_per, for_x, l, layer):  # name = ('png', (x, y))
         super().__init__(all_sprites)
         self.ox_per, self.l = ox_per, l
         self.image = load_image(name[0])  # считываем назвнаие
         self.rect = self.image.get_rect()
+        self._layer = layer
         self.rect.x = name[1][0]  # считаваем абциссу
         self.rect.y = name[1][1]  # считаваем ординату
         self.mask_car = pygame.mask.from_surface(self.image)
@@ -164,7 +166,8 @@ def Main_game(surf):
     # которая генерирется и появляется на n_ом расстоянии от осн. экрана
 
     sprts_cars = pygame.sprite.Group()  # группа спрайтов машинок
-    all_sprites = pygame.sprite.Group()
+    all_sprites = pygame.sprite.LayeredUpdates()
+
 
     pygame.init()
     screen = surf
@@ -184,7 +187,7 @@ def Main_game(surf):
                  ('black_car.png', (x4, choice(cor_y))),
                  ('purp_car.png', (x5, choice(cor_y))),
                  ('white_car.png', (x6, choice(cor_y)))]:
-        Cars(all_sprites, name, ox, for_x, l)  # передаём в name имя файла и координаты запуска
+        Cars(all_sprites, name, ox, for_x, l, -1)  # передаём в name имя файла и координаты запуска
 
     imgg = load_image('roof_g.png')
     imgv = load_image('roof_v.png')
@@ -200,6 +203,7 @@ def Main_game(surf):
 
     while running:
         screen.fill((150, 190, 100))
+
 
         screen.blit(imgtr, (xx, yy))
         screen.blit(imgtr, (X1, Y1))
@@ -218,6 +222,8 @@ def Main_game(surf):
         for position in roof_v_positions:
             screen.blit(imgv, position)
 
+
+
         # Движение домиков "roof_g"
         roof_g_positions = [(x - roof_g_speed, y) for x, y in roof_g_positions]
         # При достижении края экрана, перемещаем домик в конец очереди для создания непрерывной ленты
@@ -228,8 +234,9 @@ def Main_game(surf):
         roof_v_positions = [((WIDTH, y) if x < - imgv.get_width() - 100 else (x, y)) for x, y in roof_v_positions]
 
         keys = pygame.key.get_pressed()
-        all_sprites.update(keys, bus)
         all_sprites.draw(screen)
+        all_sprites.update(keys, bus)
+
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

@@ -100,9 +100,9 @@ def game_two(surf):
     clock = pygame.time.Clock()
     start_ticks = pygame.time.get_ticks()  # стартовое время в миллисекундах
     # Создаем кнопки один раз вне цикла
-    button_done = Button(830, 600, 260, 50, RED, PINK, surf, 'ещё раз')
-    button_doneliv = Button(830, 600, 260, 50, RED, PINK, surf, 'вернуться')
-    button_contin = Button(830, 600, 260, 50, RED, PINK, surf, 'едем дальше')
+    button_done = Button(765, 500, 260, 50, RED, PINK, surf, 'ещё раз')
+    button_doneliv = Button(765, 500, 260, 50, RED, PINK, surf, 'вернуться')
+    button_contin = Button(765, 500, 260, 50, RED, PINK, surf, 'едем дальше')
     # Определите шрифт один раз вне цикла
     font = pygame.font.Font('freesansbold.ttf', 64)
 
@@ -138,20 +138,20 @@ def game_two(surf):
                     tab = pygame.font.SysFont('arial', 26)
                     sc_text = tab.render('Вы потратили все жизни и проиграли.. Начните заново !', True, WHITE, BLUE)
                     screen.blit(sc_text, (640, 320))
-                    button_doneliv.draw(830, 600, 1)
+                    button_doneliv.draw(765, 500, 1)
                 else:
-                    tab = pygame.font.SysFont('arial', 26)
-                    sc_text = tab.render('Не получилось :( Попробуете выполнить задание заново?', True, WHITE, BLUE)
-                    screen.blit(sc_text, (640, 320))
-                    button_done.draw(830, 600, 1)
+
+                    sc_text = load_image('again.png')
+                    screen.blit(sc_text, (720, 320))
+                    button_done.draw(765, 500, 1)
 
         if len(s) == 11 and freeze_timer:
             time_of_end = secs
             freeze_timer = True
             tab = pygame.font.SysFont('arial', 26)
-            sc_text = tab.render('Вам удалось закрасить все необходимые места!', True, BLUE, WHITE)
-            screen.blit(sc_text, (640, 320))
-            if button_contin.draw2(830, 600) == 2:
+            sc_text = load_image('road_game_two.png')
+            screen.blit(sc_text, (740, 320))
+            if button_contin.draw2(765, 500) == 2:
                 pygame.display.update()
 
         for event in pygame.event.get():
